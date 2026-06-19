@@ -110,6 +110,9 @@ rank từ nhiều hostname.
 Khi đổi sang mạng LAN khác và IP thay đổi, xem
 `docs/05-lan-change-reconnect.md`.
 
+Khi chia sẻ repo cho bạn trong nhóm hoặc thay zip bằng GitHub, xem
+`docs/06-github-team-workflow.md`.
+
 ## Trạng thái mong muốn trước khi làm project thật
 
 ```text
