@@ -3,8 +3,20 @@
 Repo này dùng để kết nối 3 MacBook thành một cụm Ubuntu VM chạy SSH, NFS và
 OpenMPI cho môn Parallel Programming / Parallel Computing.
 
-Repo này không phụ thuộc vào MPOT. Dự án cuối kì thật sự sẽ đặt sau; hiện tại
-mục tiêu chỉ là dựng hạ tầng cluster trước.
+Repo này không phụ thuộc vào MPOT. Ngoài phần cluster setup, repo đã có project
+cuối kì:
+
+```text
+Hybrid MPI + OpenMP Blocked Online Self-Attention
+```
+
+Project chỉ tính self-attention inference kernel:
+
+```text
+O = softmax(QK^T / sqrt(Dh)) V
+```
+
+Không train Transformer, không dùng GPU, không dùng PyTorch/CUDA.
 
 ## Mô hình
 
@@ -118,6 +130,49 @@ Khi muốn chạy các bài unit test MPI có in/lưu kết quả để demo, xe
 
 Repo co ca unit test C/OpenMPI va Python/mpi4py. Python test nam trong
 `python_tests/` va chay bang `scripts/run_python_parallel_tests.sh`.
+
+## Self-Attention Project
+
+Build:
+
+```bash
+bash scripts/build.sh
+```
+
+Correctness tests:
+
+```bash
+bash scripts/run_unit_tests.sh
+```
+
+Demo correctness tren cluster:
+
+```bash
+bash scripts/run_demo_correctness.sh
+```
+
+Demo performance:
+
+```bash
+bash scripts/run_demo_perf.sh
+```
+
+Generate plots:
+
+```bash
+bash scripts/install_plot_deps.sh
+python3 plots/plot_all.py --input results/raw --output results/figures
+```
+
+Docs chinh:
+
+```text
+docs/attention/00_PROJECT_OVERVIEW.md
+docs/attention/01_ALGORITHM_EXPLANATION.md
+docs/attention/02_MPI_OPENMP_DESIGN.md
+docs/attention/03_DEMO_AND_BENCHMARK.md
+docs/attention/04_MEMBER_TASKS.md
+```
 
 ## Trạng thái mong muốn trước khi làm project thật
 
