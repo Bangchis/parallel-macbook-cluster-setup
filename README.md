@@ -116,6 +116,9 @@ Khi chia sẻ repo cho bạn trong nhóm hoặc thay zip bằng GitHub, xem
 Khi muốn chạy các bài unit test MPI có in/lưu kết quả để demo, xem
 `docs/07-running-parallel-tests.md`.
 
+Repo co ca unit test C/OpenMPI va Python/mpi4py. Python test nam trong
+`python_tests/` va chay bang `scripts/run_python_parallel_tests.sh`.
+
 ## Trạng thái mong muốn trước khi làm project thật
 
 ```text

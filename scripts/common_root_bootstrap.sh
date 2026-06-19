@@ -27,6 +27,7 @@ apt install -y \
   build-essential \
   openmpi-bin \
   libopenmpi-dev \
+  python3-mpi4py \
   openssh-server \
   openssh-client \
   nfs-kernel-server \
@@ -59,4 +60,3 @@ echo "role=$ROLE"
 echo "hostname=$(hostname)"
 echo "ip=$(hostname -I)"
 echo "public_key=$(cat "/home/$CLUSTER_USER/.ssh/id_ed25519.pub")"
-
