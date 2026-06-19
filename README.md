@@ -113,6 +113,9 @@ Khi đổi sang mạng LAN khác và IP thay đổi, xem
 Khi chia sẻ repo cho bạn trong nhóm hoặc thay zip bằng GitHub, xem
 `docs/06-github-team-workflow.md`.
 
+Khi muốn chạy các bài unit test MPI có in/lưu kết quả để demo, xem
+`docs/07-running-parallel-tests.md`.
+
 ## Trạng thái mong muốn trước khi làm project thật
 
 ```text
