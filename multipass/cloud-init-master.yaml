@@ -1,0 +1,40 @@
+#cloud-config
+hostname: master
+manage_etc_hosts: true
+
+users:
+  - default
+  - name: mpiuser
+    gecos: MPI Cluster User
+    groups: [adm, sudo]
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    lock_passwd: true
+
+package_update: true
+packages:
+  - build-essential
+  - net-tools
+  - openssh-server
+  - openssh-client
+  - openmpi-bin
+  - libopenmpi-dev
+  - nfs-kernel-server
+  - nfs-common
+  - htop
+  - nano
+  - curl
+  - git
+  - unzip
+
+runcmd:
+  - systemctl enable --now ssh
+  - mkdir -p /shared/mpi
+  - chown -R mpiuser:mpiuser /shared
+  - chmod 775 /shared /shared/mpi
+  - install -d -m 700 -o mpiuser -g mpiuser /home/mpiuser/.ssh
+  - touch /home/mpiuser/.ssh/authorized_keys
+  - chown -R mpiuser:mpiuser /home/mpiuser/.ssh
+  - chmod 600 /home/mpiuser/.ssh/authorized_keys
+  - sudo -u mpiuser ssh-keygen -t ed25519 -C openmpi-master-pp-master -f /home/mpiuser/.ssh/id_ed25519 -N ''
+
