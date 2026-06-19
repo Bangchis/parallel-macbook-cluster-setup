@@ -3,6 +3,12 @@ set -euo pipefail
 
 workspace="${1:-/shared/mpi}"
 hostfile="${2:-$workspace/hosts}"
+mpi_lan_cidr="${MPI_LAN_CIDR:-${LAN_SUBNET:-192.168.31.0/24}}"
+mpi_common=(
+  --mca btl tcp,self
+  --mca btl_tcp_if_include "$mpi_lan_cidr"
+  --mca btl_tcp_disable_family 6
+)
 
 cd "$workspace"
 
@@ -24,19 +30,19 @@ mpicc pingpong.c -o pingpong
   echo "ips=$(hostname -I)"
   echo "workspace=$workspace"
   echo "hostfile=$hostfile"
+  echo "mpi_lan_cidr=$mpi_lan_cidr"
   echo
-  echo "COMMAND: mpirun --hostfile $hostfile -np 3 ./hello"
-  mpirun --hostfile "$hostfile" -np 3 ./hello
+  echo "COMMAND: mpirun --hostfile $hostfile ${mpi_common[*]} -np 3 ./hello"
+  mpirun --hostfile "$hostfile" "${mpi_common[@]}" -np 3 ./hello
   echo
-  echo "COMMAND: mpirun --hostfile $hostfile -np 6 ./ring"
-  mpirun --hostfile "$hostfile" -np 6 ./ring
+  echo "COMMAND: mpirun --hostfile $hostfile ${mpi_common[*]} -np 6 ./ring"
+  mpirun --hostfile "$hostfile" "${mpi_common[@]}" -np 6 ./ring
   echo
-  echo "COMMAND: mpirun --hostfile $hostfile -np 6 ./reduce_sum 100000000"
-  mpirun --hostfile "$hostfile" -np 6 ./reduce_sum 100000000
+  echo "COMMAND: mpirun --hostfile $hostfile ${mpi_common[*]} -np 6 ./reduce_sum 100000000"
+  mpirun --hostfile "$hostfile" "${mpi_common[@]}" -np 6 ./reduce_sum 100000000
   echo
-  echo "COMMAND: mpirun --hostfile $hostfile -np 2 ./pingpong"
-  mpirun --hostfile "$hostfile" -np 2 ./pingpong
+  echo "COMMAND: mpirun --hostfile $hostfile ${mpi_common[*]} -np 2 ./pingpong"
+  mpirun --hostfile "$hostfile" "${mpi_common[@]}" -np 2 ./pingpong
   echo
   echo "CLUSTER_READY_FOR_DEMO=YES"
 } | tee "$workspace/final_cluster_test_log.txt"
-
