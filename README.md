@@ -9,13 +9,16 @@ mục tiêu chỉ là dựng hạ tầng cluster trước.
 ## Mô hình
 
 ```text
-MacBook 1 -> Ubuntu VM master -> hostname master -> user mpot
-MacBook 2 -> Ubuntu VM node1  -> hostname node1  -> user mpot
-MacBook 3 -> Ubuntu VM node2  -> hostname node2  -> user mpot
+MacBook 1 -> Ubuntu VM master -> hostname master -> user mpiuser
+MacBook 2 -> Ubuntu VM node1  -> hostname node1  -> user mpiuser
+MacBook 3 -> Ubuntu VM node2  -> hostname node2  -> user mpiuser
 ```
 
 Mỗi MacBook chạy đúng một Ubuntu ARM64 VM. Không dùng cloud, Docker hay
 VirtualBox cho cụm cuối kì.
+
+Master cũng là compute node: nếu hostfile có `master slots=...`, OpenMPI sẽ
+chạy rank trên master cùng node1/node2.
 
 ## Luồng làm việc
 
@@ -100,7 +103,12 @@ rank từ nhiều hostname.
 - `scripts/write_cluster_hosts_and_keys.sh`: cập nhật `/etc/hosts` và SSH key.
 - `scripts/master_configure_nfs.sh`: export `/shared/mpi` từ master.
 - `scripts/worker_mount_nfs.sh`: mount `/shared/mpi` trên worker.
+- `scripts/reconnect_after_lan_change.sh`: cập nhật IP và reconnect khi đổi
+  Wi-Fi/LAN.
 - `docs/`: hướng dẫn từng giai đoạn.
+
+Khi đổi sang mạng LAN khác và IP thay đổi, xem
+`docs/05-lan-change-reconnect.md`.
 
 ## Trạng thái mong muốn trước khi làm project thật
 
