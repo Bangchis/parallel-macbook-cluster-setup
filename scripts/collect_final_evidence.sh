@@ -24,6 +24,32 @@ run_cmd() {
   }
 }
 
+run_mpi_hostname_evidence() {
+  local code=0
+  {
+    echo
+    echo "COMMAND: $*"
+  } >> "$log" 2>&1
+
+  if command -v timeout >/dev/null 2>&1; then
+    timeout "${ATTN_EVIDENCE_TIMEOUT:-60s}" "$@" >> "$log" 2>&1 || code=$?
+  else
+    "$@" >> "$log" 2>&1 || code=$?
+  fi
+
+  if [[ "$code" -eq 124 ]]; then
+    {
+      echo "COMMAND_TIMEOUT exit_code=$code"
+      echo "NOTE: hostname evidence may already be complete; continuing after timeout."
+    } >> "$log" 2>&1
+    return 0
+  fi
+  if [[ "$code" -ne 0 ]]; then
+    echo "COMMAND_FAILED exit_code=$code" >> "$log" 2>&1
+  fi
+  return 0
+}
+
 {
   echo "FINAL_CLUSTER_EVIDENCE"
   date -u +"utc_time=%Y-%m-%dT%H:%M:%SZ"
@@ -97,7 +123,7 @@ else
   mpi+=(--oversubscribe --mca btl self,sm,tcp)
 fi
 
-run_cmd "${mpi[@]}" hostname
+run_mpi_hostname_evidence "${mpi[@]}" hostname
 
 {
   echo
