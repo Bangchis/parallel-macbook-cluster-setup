@@ -86,6 +86,7 @@ Granularity/load balancing:
 - use L=N.
 - compare `Br` and assignment strategies.
 - plot per-rank compute/communication time.
+- report both `load_imbalance <= 1.25` and `idle_gap_pct <= 0.25`.
 
 Speedup:
 

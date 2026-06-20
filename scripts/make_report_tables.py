@@ -57,6 +57,24 @@ def latest_by_run(rows: list[dict[str, str]]) -> list[dict[str, str]]:
     return [r for r in rows if r.get("run_id", "") == run_id]
 
 
+def idle_gap_pct_by_run(input_dir: Path) -> dict[str, float]:
+    by_run: dict[str, list[dict[str, str]]] = {}
+    for row in read_rows(input_dir / "rank_metrics.csv"):
+        by_run.setdefault(row.get("run_id", ""), []).append(row)
+
+    out: dict[str, float] = {}
+    for run_id, rows in by_run.items():
+        if not run_id or not rows:
+            continue
+        max_compute = max(fnum(r.get("compute_ms", "0")) for r in rows)
+        idle_values = [fnum(r.get("idle_ms", "0")) for r in rows]
+        if max_compute > 0 and idle_values:
+            out[run_id] = (max(idle_values) - min(idle_values)) / max_compute
+        else:
+            out[run_id] = 0.0
+    return out
+
+
 def make_correctness(input_dir: Path, output_dir: Path) -> bool:
     rows = read_rows(input_dir / "unit_summary.csv")
     if not rows:
@@ -138,16 +156,21 @@ def make_granularity(input_dir: Path, output_dir: Path) -> bool:
     if not rows:
         print("TABLE_SKIP=granularity missing granularity.csv")
         return False
+    idle_gap = idle_gap_pct_by_run(input_dir)
     rows = sorted(rows, key=lambda r: (r.get("assignment", ""), inum(r.get("Br", "0"))))
     body = table(
-        ["assignment", "Br", "runtime_without_comm_ms", "load_imbalance", "status"],
+        ["assignment", "Br", "runtime_without_comm_ms", "load_imbalance", "idle_gap_pct", "status"],
         [
             [
                 r.get("assignment", ""),
                 r.get("Br", ""),
                 fmt(fnum(r.get("total_ms_without_comm", "0"))),
                 fmt(fnum(r.get("load_imbalance", "0"))),
-                "OK" if fnum(r.get("load_imbalance", "0")) <= 1.25 else "ADJUST",
+                fmt(idle_gap.get(r.get("run_id", ""), 0.0)),
+                "OK"
+                if fnum(r.get("load_imbalance", "0")) <= 1.25
+                and idle_gap.get(r.get("run_id", ""), 0.0) <= 0.25
+                else "ADJUST",
             ]
             for r in rows
         ],

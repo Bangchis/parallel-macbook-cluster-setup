@@ -52,6 +52,24 @@ def table(headers: list[str], rows: list[list[str]]) -> str:
     return "\n".join(out)
 
 
+def idle_gap_pct_by_run(raw: Path) -> dict[str, float]:
+    by_run: dict[str, list[dict[str, str]]] = {}
+    for row in read_rows(raw / "rank_metrics.csv"):
+        by_run.setdefault(row.get("run_id", ""), []).append(row)
+
+    out: dict[str, float] = {}
+    for run_id, rows in by_run.items():
+        if not run_id or not rows:
+            continue
+        max_compute = max(fnum(r.get("compute_ms", "0")) for r in rows)
+        idle_values = [fnum(r.get("idle_ms", "0")) for r in rows]
+        if max_compute > 0 and idle_values:
+            out[run_id] = (max(idle_values) - min(idle_values)) / max_compute
+        else:
+            out[run_id] = 0.0
+    return out
+
+
 def section_find_n(raw: Path, summary: dict[str, str]) -> str:
     rows = read_rows(raw / "find_N.csv")
     if not rows:
@@ -136,23 +154,31 @@ def section_granularity(raw: Path) -> str:
     rows = read_rows(raw / "granularity.csv")
     if not rows:
         return "## Granularity And Load Balance\n\nNo `granularity.csv` data found.\n"
-    acceptable = [r for r in rows if fnum(r.get("load_imbalance", "999")) <= 1.25]
+    idle_gap = idle_gap_pct_by_run(raw)
+    acceptable = [
+        r for r in rows
+        if fnum(r.get("load_imbalance", "999")) <= 1.25
+        and idle_gap.get(r.get("run_id", ""), 0.0) <= 0.25
+    ]
     candidates = acceptable if acceptable else rows
     best = min(
         candidates,
         key=lambda r: (
             fnum(r.get("load_imbalance", "999")),
+            idle_gap.get(r.get("run_id", ""), 999.0),
             fnum(r.get("total_ms_without_comm", "999999")),
         ),
     )
     status = "acceptable" if acceptable else "needs adjustment"
+    best_idle_gap = idle_gap.get(best.get("run_id", ""), 0.0)
     body = [
         "## Granularity And Load Balance",
         "",
         f"- Best observed mapping: `{best.get('assignment', '')}`.",
         f"- Best observed Br: `{best.get('Br', '')}`.",
         f"- Best observed load imbalance: `{fnum(best.get('load_imbalance', '0')):.3f}`.",
-        f"- Balance status: `{status}` against the 1.25 threshold.",
+        f"- Best observed idle gap: `{best_idle_gap:.3f}` against the 0.25 threshold.",
+        f"- Balance status: `{status}` against both thresholds.",
         "",
     ]
     if not acceptable:

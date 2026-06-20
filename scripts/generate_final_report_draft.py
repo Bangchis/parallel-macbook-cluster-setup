@@ -91,6 +91,24 @@ def table(headers: list[str], rows: list[list[str]]) -> str:
     return "\n".join(out)
 
 
+def idle_gap_pct_by_run(raw: Path) -> dict[str, float]:
+    by_run: dict[str, list[dict[str, str]]] = {}
+    for row in read_csv(raw / "rank_metrics.csv"):
+        by_run.setdefault(row.get("run_id", ""), []).append(row)
+
+    out: dict[str, float] = {}
+    for run_id, rows in by_run.items():
+        if not run_id or not rows:
+            continue
+        max_compute = max(fnum(r.get("compute_ms", "0")) for r in rows)
+        idle_values = [fnum(r.get("idle_ms", "0")) for r in rows]
+        if max_compute > 0 and idle_values:
+            out[run_id] = (max(idle_values) - min(idle_values)) / max_compute
+        else:
+            out[run_id] = 0.0
+    return out
+
+
 def one_line_table(title: str, values: list[tuple[str, str]]) -> str:
     return "\n".join([
         f"### {title}",
@@ -138,6 +156,7 @@ def section_experiment_summary(run_dir: Path) -> str:
     gran_rows = read_csv(raw / "granularity.csv")
     demo_rows = read_csv(raw / "demo_correctness.csv")
     rank_rows = read_csv(raw / "rank_metrics.csv")
+    idle_gap = idle_gap_pct_by_run(raw)
 
     hosts = sorted({r.get("hostname", "") for r in rank_rows if r.get("hostname", "")})
     best_gran = min(
@@ -168,6 +187,7 @@ def section_experiment_summary(run_dir: Path) -> str:
             ("largest P in speedup test", f"`{last_p}`"),
             ("speedup with communication at largest P", f"`{speedup:.3f}`"),
             ("best load imbalance", f"`{fnum(best_gran.get('load_imbalance', '0')):.3f}`"),
+            ("best idle gap", f"`{idle_gap.get(best_gran.get('run_id', ''), 0.0):.3f}`"),
             ("best assignment", f"`{best_gran.get('assignment', 'unknown')}`"),
             ("best Br", f"`{best_gran.get('Br', 'unknown')}`"),
             ("correctness max abs error", f"`{fnum(demo.get('max_abs_error', '0')):.6g}`"),

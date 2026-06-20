@@ -67,9 +67,11 @@ non-blocking version as an ablation to discuss communication strategy.
 
 ```text
 load_imbalance = max_rank_compute_ms / avg_rank_compute_ms
+idle_gap_pct = (max_idle_ms - min_idle_ms) / max_rank_compute_ms
 ```
 
-Neu imbalance > 1.25, report can thu `Br` nho hon/lon hon va so sanh.
+Neu `load_imbalance > 1.25` hoac `idle_gap_pct > 0.25`, report can thu `Br`
+nho hon/lon hon va so sanh.
 
 Runtime without communication dung:
 

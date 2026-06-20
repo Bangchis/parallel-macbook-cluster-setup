@@ -145,28 +145,53 @@ def suggest_find_n(rows: list[dict[str, str]], min_ms: float, max_ms: float) -> 
     return body, env
 
 
-def suggest_granularity(rows: list[dict[str, str]]) -> tuple[str, str]:
+def idle_gap_pct_by_run(rank_rows: list[dict[str, str]]) -> dict[str, float]:
+    by_run: dict[str, list[dict[str, str]]] = {}
+    for row in rank_rows:
+        by_run.setdefault(row.get("run_id", ""), []).append(row)
+
+    out: dict[str, float] = {}
+    for run_id, rows in by_run.items():
+        if not run_id or not rows:
+            continue
+        max_compute = max(fnum(r.get("compute_ms", "0")) for r in rows)
+        idle_values = [fnum(r.get("idle_ms", "0")) for r in rows]
+        if max_compute > 0 and idle_values:
+            out[run_id] = (max(idle_values) - min(idle_values)) / max_compute
+        else:
+            out[run_id] = 0.0
+    return out
+
+
+def suggest_granularity(rows: list[dict[str, str]], rank_rows: list[dict[str, str]]) -> tuple[str, str]:
     if not rows:
         body = "## Granularity Advice\n\nNo `granularity.csv` rows found yet.\n"
         env = "# No granularity advice: missing granularity.csv\n"
         return body, env
 
-    acceptable = [r for r in rows if fnum(r.get("load_imbalance", "999")) <= 1.25]
+    idle_gap = idle_gap_pct_by_run(rank_rows)
+    acceptable = [
+        r for r in rows
+        if fnum(r.get("load_imbalance", "999")) <= 1.25
+        and idle_gap.get(r.get("run_id", ""), 0.0) <= 0.25
+    ]
     if acceptable:
         best = min(
             acceptable,
             key=lambda r: (
                 fnum(r.get("total_ms_with_comm", "999999")),
                 fnum(r.get("load_imbalance", "999")),
+                idle_gap.get(r.get("run_id", ""), 999.0),
             ),
         )
         status = "acceptable"
-        action = "Use the fastest configuration that is inside the 1.25 imbalance threshold."
+        action = "Use the fastest configuration inside both the 1.25 compute and 0.25 idle-gap thresholds."
     else:
         best = min(
             rows,
             key=lambda r: (
                 fnum(r.get("load_imbalance", "999")),
+                idle_gap.get(r.get("run_id", ""), 999.0),
                 fnum(r.get("total_ms_with_comm", "999999")),
             ),
         )
@@ -187,12 +212,13 @@ def suggest_granularity(rows: list[dict[str, str]]) -> tuple[str, str]:
         f"- Recommended assignment: `{best_assignment}`.",
         f"- Recommended Br: `{best_br}`.",
         f"- Best observed load imbalance: `{fnum(best.get('load_imbalance', '0')):.3f}`.",
+        f"- Best observed idle gap: `{idle_gap.get(best.get('run_id', ''), 0.0):.3f}`.",
         f"- Best observed runtime with communication: `{fmt_ms(fnum(best.get('total_ms_with_comm', '0')))}`.",
         f"- Next `ATTN_BR_LIST`: `{' '.join(str(x) for x in br_candidates)}`.",
         f"- Action: {action}",
         "",
         table(
-            ["assignment", "Br", "runtime_with_comm", "runtime_without_comm", "imbalance"],
+            ["assignment", "Br", "runtime_with_comm", "runtime_without_comm", "imbalance", "idle_gap"],
             [
                 [
                     r.get("assignment", ""),
@@ -200,6 +226,7 @@ def suggest_granularity(rows: list[dict[str, str]]) -> tuple[str, str]:
                     fmt_ms(fnum(r.get("total_ms_with_comm", "0"))),
                     fmt_ms(fnum(r.get("total_ms_without_comm", "0"))),
                     f"{fnum(r.get('load_imbalance', '0')):.3f}",
+                    f"{idle_gap.get(r.get('run_id', ''), 0.0):.3f}",
                 ]
                 for r in sorted(rows, key=lambda r: (r.get("assignment", ""), inum(r.get("Br", "0"))))
             ],
@@ -232,8 +259,9 @@ def main() -> int:
 
     find_rows = read_rows(raw / "find_N.csv")
     gran_rows = read_rows(raw / "granularity.csv")
+    rank_rows = read_rows(raw / "rank_metrics.csv")
     find_body, find_env = suggest_find_n(find_rows, args.min_ms, args.max_ms)
-    gran_body, gran_env = suggest_granularity(gran_rows)
+    gran_body, gran_env = suggest_granularity(gran_rows, rank_rows)
 
     body = "\n".join([
         "# Experiment Advisor",

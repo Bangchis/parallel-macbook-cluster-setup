@@ -186,6 +186,7 @@ int main(int argc, char** argv) {
         Metrics sum_metrics;
         sum_metrics.run_id = cfg.run_id;
         sum_metrics.world_size = world_size;
+        sum_metrics.load_imbalance = 0.0;
 
         for (int rep = 0; rep < cfg.repeat; rep++) {
             Metrics run_metrics;

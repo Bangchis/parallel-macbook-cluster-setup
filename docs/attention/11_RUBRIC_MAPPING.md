@@ -122,6 +122,7 @@ Evidence:
 Expected proof:
 
 - `load_imbalance <= 1.25` is preferred.
+- `idle_gap_pct <= 0.25` satisfies the idle-time rule.
 - If not, explain the chosen `Br` and why more tuning is needed.
 
 ## Find N

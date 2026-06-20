@@ -192,6 +192,21 @@ def check_load_balance(run_dir: Path, rows: list[tuple[str, str, str]]) -> None:
     status = "PASS" if best <= 1.25 else "WARN"
     add(rows, status, "load imbalance", f"best={best:.4f}, target<=1.25")
 
+    rank_rows = read_csv(run_dir / "raw" / "rank_metrics.csv")
+    by_run: dict[str, list[dict[str, str]]] = {}
+    for row in rank_rows:
+        by_run.setdefault(row.get("run_id", ""), []).append(row)
+    idle_gaps = []
+    for run_id, run_rows in by_run.items():
+        if not run_id.startswith("gran_"):
+            continue
+        max_compute = max((fnum(r.get("compute_ms", "0")) for r in run_rows), default=0.0)
+        idle_values = [fnum(r.get("idle_ms", "0")) for r in run_rows]
+        if max_compute > 0 and idle_values:
+            idle_gaps.append((max(idle_values) - min(idle_values)) / max_compute)
+    best_idle = min(idle_gaps) if idle_gaps else 0.0
+    add(rows, "PASS" if best_idle <= 0.25 else "WARN", "idle gap", f"best={best_idle:.4f}, target<=0.25")
+
 
 def check_cluster_hosts(run_dir: Path, rows: list[tuple[str, str, str]], expected_hosts: list[str]) -> None:
     rank_rows = read_csv(run_dir / "raw" / "rank_metrics.csv")

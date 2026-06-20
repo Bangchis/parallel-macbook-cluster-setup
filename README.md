@@ -247,6 +247,10 @@ efficiency_with_comm
 efficiency_without_comm
 ```
 
+Granularity/load-balance tables also include `idle_gap_pct`, computed from
+per-rank idle time. The target is `<= 0.25`, matching the professor's 25%
+idle-time rule.
+
 Create a submission archive:
 
 ```bash
