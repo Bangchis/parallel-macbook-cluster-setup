@@ -24,6 +24,7 @@ TABLES = [
     ("correctness.md", "Correctness"),
     ("speedup.md", "Speedup and efficiency"),
     ("granularity.md", "Granularity and load balance"),
+    ("experiment_advisor.md", "Experiment tuning advice"),
     ("rank_breakdown.md", "Rank breakdown"),
     ("communication.md", "Communication strategy"),
     ("thread_scaling.md", "OpenMP thread scaling"),

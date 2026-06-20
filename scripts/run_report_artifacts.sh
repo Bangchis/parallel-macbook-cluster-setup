@@ -10,10 +10,16 @@ fi
 raw_dir="${ATTN_RESULTS_DIR:-results/raw}"
 figures_dir="${ATTN_FIGURES_DIR:-results/figures}"
 tables_dir="${ATTN_TABLES_DIR:-results/tables}"
+export MPLCONFIGDIR="${MPLCONFIGDIR:-${TMPDIR:-/tmp}/attention_matplotlib_cache}"
+mkdir -p "$MPLCONFIGDIR"
 
 "$plot_python" plots/plot_all.py --input "$raw_dir" --output "$figures_dir"
 python3 scripts/make_report_tables.py --input "$raw_dir" --output "$tables_dir"
 python3 scripts/analyze_final_results.py --input "$raw_dir" --output "$tables_dir/analysis.md"
+python3 scripts/advise_experiments.py \
+  --input "$raw_dir" \
+  --output "$tables_dir/experiment_advisor.md" \
+  --env-output "$tables_dir/experiment_advisor.env"
 
 run_dir="$(dirname "$raw_dir")"
 if [[ -d "$run_dir" && "$run_dir" != "." ]]; then

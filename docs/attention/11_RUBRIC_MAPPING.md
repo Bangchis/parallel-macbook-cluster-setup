@@ -136,6 +136,7 @@ Evidence:
 - `results/final_.../figures/01_runtime_vs_L.png`
 - `results/final_.../experiment_summary.env`
 - `results/final_.../tables/analysis.md`
+- `results/final_.../tables/experiment_advisor.md`
 
 Expected proof:
 

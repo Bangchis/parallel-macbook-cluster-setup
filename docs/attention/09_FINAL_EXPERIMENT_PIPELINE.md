@@ -101,6 +101,7 @@ Important files:
 raw/*.csv
 figures/*.png
 tables/*.md
+tables/experiment_advisor.env
 report/final_report_draft.md
 evidence/cluster_evidence.txt
 evidence/hosts.used
@@ -112,6 +113,8 @@ Use `evidence/cluster_evidence.txt` to prove OpenMPI, hostfile, CPU info, and
 the `mpirun hostname` test.
 Use `experiment_summary.env` to report the selected N and 2N.
 Use `tables/analysis.md` for the main result discussion.
+Use `tables/experiment_advisor.md` and `tables/experiment_advisor.env` if the
+first benchmark run needs a better N or granularity setting.
 Use `report/final_report_draft.md` as the first full report draft, then edit
 names, screenshots, final discussion, and formatting before submission.
 Use `readiness.md` as the final checklist before submission.
@@ -140,7 +143,14 @@ If no row is close to 2-3 minutes, edit:
 nano configs/attention_experiment.env
 ```
 
-Increase or decrease:
+Use the advisor output:
+
+```bash
+cat results/final_YYYYMMDD-HHMMSS/tables/experiment_advisor.md
+cat results/final_YYYYMMDD-HHMMSS/tables/experiment_advisor.env
+```
+
+Then increase or decrease:
 
 ```bash
 ATTN_FIND_N_LIST="..."

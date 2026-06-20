@@ -77,9 +77,18 @@ Doc nay giup moi thanh vien biet file nao lam gi va nen debug o dau.
 - Summarizes selected N, speedup, load balance, block size, communication, and
   cluster hostnames.
 
+`scripts/advise_experiments.py`
+
+- Reads `find_N.csv` and `granularity.csv`.
+- Suggests next `ATTN_FIND_N_LIST`, optional `ATTN_SELECTED_N`,
+  `ATTN_ASSIGNMENT`, `ATTN_BR`, and `ATTN_BR_LIST`.
+- Helps the group reach the required 2-3 minute runtime and the 1.25 load
+  imbalance target without guessing.
+
 `scripts/run_report_artifacts.sh`
 
-- Generates plots, markdown tables, and `analysis.md` after experiments finish.
+- Generates plots, markdown tables, `analysis.md`, experiment advice, and the
+  report draft after experiments finish.
 
 `scripts/generate_final_report_draft.py`
 

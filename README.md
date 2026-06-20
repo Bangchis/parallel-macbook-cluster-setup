@@ -194,7 +194,9 @@ bash scripts/run_report_artifacts.sh
 This also generates `results/.../tables/analysis.md`, which summarizes the
 main results for the report discussion, and
 `results/.../report/final_report_draft.md`, which is a first report draft
-assembled from the run artifacts.
+assembled from the run artifacts. It also writes
+`results/.../tables/experiment_advisor.md` with suggested next values for
+`ATTN_FIND_N_LIST`, `ATTN_SELECTED_N`, `ATTN_ASSIGNMENT`, and `ATTN_BR`.
 
 Run the full required final experiment pipeline on the cluster:
 
@@ -227,6 +229,13 @@ The generated report draft is saved in:
 
 ```text
 results/final_YYYYMMDD-HHMMSS/report/final_report_draft.md
+```
+
+Benchmark tuning advice is saved in:
+
+```text
+results/final_YYYYMMDD-HHMMSS/tables/experiment_advisor.md
+results/final_YYYYMMDD-HHMMSS/tables/experiment_advisor.env
 ```
 
 Create a submission archive:
