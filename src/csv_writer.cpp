@@ -48,13 +48,22 @@ void write_rank_stats(const std::string& path, const std::vector<RankStat>& rank
     std::ofstream out(path, std::ios::app);
     if (header) {
         out << "run_id,rank,hostname,rows_assigned,compute_ms,bcast_ms,gather_ms,"
-            << "reduce_ms,total_ms,idle_ms,checksum_local\n";
+            << "reduce_ms,comm_ms,total_ms,idle_ms,compute_pct,comm_pct,idle_pct,"
+            << "checksum_local\n";
     }
     for (const RankStat& r : ranks) {
+        double comm_ms = r.bcast_ms + r.gather_ms + r.reduce_ms;
+        double active_ms = r.compute_ms + comm_ms;
+        double max_compute_ms = r.compute_ms + r.idle_ms;
+        double compute_pct = active_ms > 0.0 ? 100.0 * r.compute_ms / active_ms : 0.0;
+        double comm_pct = active_ms > 0.0 ? 100.0 * comm_ms / active_ms : 0.0;
+        double idle_pct = max_compute_ms > 0.0 ? 100.0 * r.idle_ms / max_compute_ms : 0.0;
         out << r.run_id << "," << r.rank << "," << r.hostname << ","
             << r.rows_assigned << "," << r.compute_ms << "," << r.bcast_ms
-            << "," << r.gather_ms << "," << r.reduce_ms << "," << r.total_ms
-            << "," << r.idle_ms << "," << r.checksum_local << "\n";
+            << "," << r.gather_ms << "," << r.reduce_ms << "," << comm_ms
+            << "," << r.total_ms << "," << r.idle_ms << "," << compute_pct
+            << "," << comm_pct << "," << idle_pct << "," << r.checksum_local
+            << "\n";
     }
 }
 

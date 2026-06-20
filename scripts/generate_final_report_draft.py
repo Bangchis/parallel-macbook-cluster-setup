@@ -310,6 +310,9 @@ def main() -> int:
         "non-blocking `MPI_Ibcast`/`MPI_Ireduce`.",
         "- Load balancing metric: `max_rank_compute_ms / avg_rank_compute_ms`, "
         "with target threshold `<= 1.25`.",
+        "- Per-rank evidence: `rank_metrics.csv` records rows assigned, compute "
+        "time, communication time, idle time, and the corresponding percentages "
+        "for each MPI rank.",
         "",
         "## Parallel Pseudocode",
         "",

@@ -35,6 +35,40 @@ def fmt(value: float) -> str:
     return f"{value:.4f}"
 
 
+def rank_comm_ms(row: dict[str, str]) -> float:
+    if row.get("comm_ms", "") != "":
+        return fnum(row.get("comm_ms", "0"))
+    return (
+        fnum(row.get("bcast_ms", "0"))
+        + fnum(row.get("gather_ms", "0"))
+        + fnum(row.get("reduce_ms", "0"))
+    )
+
+
+def rank_idle_pct(row: dict[str, str]) -> float:
+    if row.get("idle_pct", "") != "":
+        return fnum(row.get("idle_pct", "0"))
+    compute = fnum(row.get("compute_ms", "0"))
+    idle = fnum(row.get("idle_ms", "0"))
+    denom = compute + idle
+    return 100.0 * idle / denom if denom > 0 else 0.0
+
+
+def pct_from_row(row: dict[str, str], key: str) -> float:
+    if row.get(key, "") != "":
+        return fnum(row.get(key, "0"))
+    compute = fnum(row.get("compute_ms", "0"))
+    comm = rank_comm_ms(row)
+    denom = compute + comm
+    if denom <= 0:
+        return 0.0
+    if key == "compute_pct":
+        return 100.0 * compute / denom
+    if key == "comm_pct":
+        return 100.0 * comm / denom
+    return 0.0
+
+
 def table(headers: list[str], rows: Iterable[list[str]]) -> str:
     out = []
     out.append("| " + " | ".join(headers) + " |")
@@ -185,19 +219,28 @@ def make_rank_breakdown(input_dir: Path, output_dir: Path) -> bool:
         print("TABLE_SKIP=rank_breakdown missing rank_metrics.csv")
         return False
     body = table(
-        ["rank", "hostname", "rows", "compute_ms", "comm_ms", "idle_ms"],
+        [
+            "rank",
+            "hostname",
+            "rows",
+            "compute_ms",
+            "comm_ms",
+            "idle_ms",
+            "compute_pct",
+            "comm_pct",
+            "idle_pct",
+        ],
         [
             [
                 r.get("rank", ""),
                 r.get("hostname", ""),
                 r.get("rows_assigned", ""),
                 fmt(fnum(r.get("compute_ms", "0"))),
-                fmt(
-                    fnum(r.get("bcast_ms", "0"))
-                    + fnum(r.get("gather_ms", "0"))
-                    + fnum(r.get("reduce_ms", "0"))
-                ),
+                fmt(rank_comm_ms(r)),
                 fmt(fnum(r.get("idle_ms", "0"))),
+                fmt(pct_from_row(r, "compute_pct")),
+                fmt(pct_from_row(r, "comm_pct")),
+                fmt(rank_idle_pct(r)),
             ]
             for r in rows
         ],

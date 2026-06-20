@@ -61,6 +61,9 @@ Doc nay giup moi thanh vien biet file nao lam gi va nen debug o dau.
 `src/csv_writer.hpp/cpp`
 
 - Writes `summary.csv`, `rank_metrics.csv`, `thread_metrics.csv`.
+- `rank_metrics.csv` includes `comm_ms`, `compute_pct`, `comm_pct`, and
+  `idle_pct` so the report can show per-process compute/communication/idle
+  balance directly.
 
 `src/memory_model.hpp/cpp`
 

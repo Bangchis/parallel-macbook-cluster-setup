@@ -102,14 +102,16 @@ results/final_.../raw/rank_metrics.csv
 Show these columns:
 
 ```text
-rank,hostname,rows_assigned,compute_ms,bcast_ms,gather_ms,reduce_ms
+rank,hostname,rows_assigned,compute_ms,comm_ms,idle_ms,compute_pct,comm_pct,idle_pct
 ```
 
 What to say:
 
 - Each hostname has assigned rows.
 - `rows_assigned > 0` means the machine computed output rows.
-- `compute_ms` and communication columns are measured separately.
+- `compute_ms`, `comm_ms`, and `idle_ms` are measured separately.
+- The percentage columns make the load-balance and communication overhead
+  discussion easier to defend.
 
 ## 4. Show Required Experiments
 

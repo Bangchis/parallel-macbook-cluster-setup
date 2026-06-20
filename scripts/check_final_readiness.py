@@ -256,6 +256,33 @@ def check_load_balance(run_dir: Path, rows: list[tuple[str, str, str]]) -> None:
     add(rows, "PASS" if best_idle <= 0.25 else "WARN", "idle gap", f"best={best_idle:.4f}, target<=0.25")
 
 
+def check_rank_metric_columns(run_dir: Path, rows: list[tuple[str, str, str]]) -> None:
+    rank_rows = read_csv(run_dir / "raw" / "rank_metrics.csv")
+    if not rank_rows:
+        add(rows, "FAIL", "rank metric derived columns", "missing rank_metrics.csv rows")
+        return
+    required = ["comm_ms", "compute_pct", "comm_pct", "idle_pct"]
+    missing = [name for name in required if name not in rank_rows[0]]
+    if missing:
+        add(rows, "WARN", "rank metric derived columns", "missing=" + ",".join(missing))
+        return
+    pct_values = []
+    for row in rank_rows:
+        pct_values.extend([
+            fnum(row.get("compute_pct", "0")),
+            fnum(row.get("comm_pct", "0")),
+            fnum(row.get("idle_pct", "0")),
+        ])
+    bounded = all(0.0 <= value <= 100.0001 for value in pct_values)
+    add(
+        rows,
+        "PASS" if bounded else "WARN",
+        "rank metric derived columns",
+        "comm_ms/compute_pct/comm_pct/idle_pct present and bounded"
+        if bounded else "percentage values outside [0,100]",
+    )
+
+
 def check_cluster_hosts(run_dir: Path, rows: list[tuple[str, str, str]], expected_hosts: list[str]) -> None:
     rank_rows = read_csv(run_dir / "raw" / "rank_metrics.csv")
     hosts = sorted({r.get("hostname", "") for r in rank_rows if r.get("hostname", "")})
@@ -374,6 +401,7 @@ def main() -> int:
     check_find_n(run_dir, rows)
     check_speedup(run_dir, rows)
     check_load_balance(run_dir, rows)
+    check_rank_metric_columns(run_dir, rows)
     check_cluster_hosts(run_dir, rows, args.require_host)
     check_host_slots(run_dir, rows)
     check_loc(repo, rows)

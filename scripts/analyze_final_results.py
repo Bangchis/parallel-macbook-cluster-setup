@@ -32,6 +32,44 @@ def fmt_ms(value: float) -> str:
     return f"{value:.3f}ms"
 
 
+def fmt_pct(value: float) -> str:
+    return f"{value:.1f}%"
+
+
+def rank_comm_ms(row: dict[str, str]) -> float:
+    if row.get("comm_ms", "") != "":
+        return fnum(row.get("comm_ms", "0"))
+    return (
+        fnum(row.get("bcast_ms", "0"))
+        + fnum(row.get("gather_ms", "0"))
+        + fnum(row.get("reduce_ms", "0"))
+    )
+
+
+def pct_from_row(row: dict[str, str], key: str) -> float:
+    if row.get(key, "") != "":
+        return fnum(row.get(key, "0"))
+    compute = fnum(row.get("compute_ms", "0"))
+    comm = rank_comm_ms(row)
+    denom = compute + comm
+    if denom <= 0:
+        return 0.0
+    if key == "compute_pct":
+        return 100.0 * compute / denom
+    if key == "comm_pct":
+        return 100.0 * comm / denom
+    return 0.0
+
+
+def rank_idle_pct(row: dict[str, str]) -> float:
+    if row.get("idle_pct", "") != "":
+        return fnum(row.get("idle_pct", "0"))
+    compute = fnum(row.get("compute_ms", "0"))
+    idle = fnum(row.get("idle_ms", "0"))
+    denom = compute + idle
+    return 100.0 * idle / denom if denom > 0 else 0.0
+
+
 def parse_summary(path: Path) -> dict[str, str]:
     values: dict[str, str] = {}
     if not path.exists():
@@ -276,6 +314,46 @@ def section_hosts(raw: Path) -> str:
     ])
 
 
+def section_rank_breakdown(raw: Path) -> str:
+    rows = read_rows(raw / "rank_metrics.csv")
+    if not rows:
+        return "## Rank Breakdown\n\nNo `rank_metrics.csv` data found.\n"
+    latest_run_id = rows[-1].get("run_id", "")
+    latest = [r for r in rows if r.get("run_id", "") == latest_run_id]
+    if not latest:
+        return "## Rank Breakdown\n\nNo latest run rows found.\n"
+
+    max_idle_pct = max(rank_idle_pct(r) for r in latest)
+    max_comm_pct = max(pct_from_row(r, "comm_pct") for r in latest)
+    body = [
+        "## Rank Breakdown",
+        "",
+        f"- Latest rank run: `{latest_run_id}`.",
+        f"- Maximum rank idle percentage: `{fmt_pct(max_idle_pct)}`.",
+        f"- Maximum communication share of active time: `{fmt_pct(max_comm_pct)}`.",
+        "",
+        table(
+            ["rank", "host", "rows", "compute", "comm", "idle", "compute%", "comm%", "idle%"],
+            [
+                [
+                    r.get("rank", ""),
+                    r.get("hostname", ""),
+                    r.get("rows_assigned", ""),
+                    fmt_ms(fnum(r.get("compute_ms", "0"))),
+                    fmt_ms(rank_comm_ms(r)),
+                    fmt_ms(fnum(r.get("idle_ms", "0"))),
+                    fmt_pct(pct_from_row(r, "compute_pct")),
+                    fmt_pct(pct_from_row(r, "comm_pct")),
+                    fmt_pct(rank_idle_pct(r)),
+                ]
+                for r in latest
+            ],
+        ),
+        "",
+    ]
+    return "\n".join(body)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", default="results/raw")
@@ -294,6 +372,7 @@ def main() -> int:
         section_find_n(raw, summary),
         section_speedup(raw),
         section_granularity(raw),
+        section_rank_breakdown(raw),
         section_blocksize(raw),
         section_comm(raw),
         section_threads(raw),

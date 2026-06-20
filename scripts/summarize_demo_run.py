@@ -25,6 +25,29 @@ def fmt_ms(value: float) -> str:
     return f"{value:.3f}ms"
 
 
+def fmt_pct(value: float) -> str:
+    return f"{value:.1f}%"
+
+
+def rank_comm_ms(row: dict[str, str]) -> float:
+    if row.get("comm_ms", "") != "":
+        return fnum(row.get("comm_ms", "0"))
+    return (
+        fnum(row.get("bcast_ms", "0"))
+        + fnum(row.get("gather_ms", "0"))
+        + fnum(row.get("reduce_ms", "0"))
+    )
+
+
+def rank_idle_pct(row: dict[str, str]) -> float:
+    if row.get("idle_pct", "") != "":
+        return fnum(row.get("idle_pct", "0"))
+    compute = fnum(row.get("compute_ms", "0"))
+    idle = fnum(row.get("idle_ms", "0"))
+    denom = compute + idle
+    return 100.0 * idle / denom if denom > 0 else 0.0
+
+
 def table(headers: list[str], rows: list[list[str]]) -> str:
     out = [
         "| " + " | ".join(headers) + " |",
@@ -93,19 +116,16 @@ def main() -> int:
         warnings.append("demo saw fewer than 3 distinct hostnames")
 
     rank_table = table(
-        ["rank", "hostname", "rows", "compute", "comm", "idle"],
+        ["rank", "hostname", "rows", "compute", "comm", "idle", "idle_pct"],
         [
             [
                 r.get("rank", ""),
                 r.get("hostname", ""),
                 r.get("rows_assigned", ""),
                 fmt_ms(fnum(r.get("compute_ms", "0"))),
-                fmt_ms(
-                    fnum(r.get("bcast_ms", "0"))
-                    + fnum(r.get("gather_ms", "0"))
-                    + fnum(r.get("reduce_ms", "0"))
-                ),
+                fmt_ms(rank_comm_ms(r)),
                 fmt_ms(fnum(r.get("idle_ms", "0"))),
+                fmt_pct(rank_idle_pct(r)),
             ]
             for r in rank_rows
         ],

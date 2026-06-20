@@ -259,6 +259,12 @@ efficiency_with_comm
 efficiency_without_comm
 ```
 
+Per-rank compute/communication/idle evidence is written to:
+
+```text
+results/final_YYYYMMDD-HHMMSS/raw/rank_metrics.csv
+```
+
 Granularity/load-balance tables also include `idle_gap_pct`, computed from
 per-rank idle time. The target is `<= 0.25`, matching the professor's 25%
 idle-time rule.
