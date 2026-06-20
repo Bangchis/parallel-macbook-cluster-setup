@@ -31,6 +31,7 @@ run_cmd() {
   echo "run_dir=$run_dir"
   echo "evidence_dir=$evidence_dir"
   echo "hostfile=$hostfile"
+  echo "use_hostfile=$use_hostfile"
   echo "evidence_np=$np"
 } > "$log"
 
@@ -53,12 +54,33 @@ run_cmd which mpicc
 run_cmd mpicc --version
 run_cmd bash scripts/build.sh
 
-if [[ -f "$hostfile" ]]; then
+if [[ "$use_hostfile" == "1" && -f "$hostfile" ]]; then
   cp "$hostfile" "$evidence_dir/hosts.used"
+  python3 scripts/summarize_host_slots.py \
+    --hostfile "$hostfile" \
+    --output "$evidence_dir/host_slots.csv" \
+    --summary "$evidence_dir/host_slots.env" >> "$log" 2>&1 || true
   {
     echo
     echo "HOSTFILE_CONTENT"
     cat "$hostfile"
+    echo
+    echo "HOST_SLOTS_SUMMARY"
+    cat "$evidence_dir/host_slots.env" 2>/dev/null || true
+  } >> "$log"
+elif [[ "$use_hostfile" != "1" ]]; then
+  echo "$(hostname) slots=$np" > "$evidence_dir/hosts.used"
+  python3 scripts/summarize_host_slots.py \
+    --hostfile "$evidence_dir/hosts.used" \
+    --output "$evidence_dir/host_slots.csv" \
+    --summary "$evidence_dir/host_slots.env" >> "$log" 2>&1 || true
+  {
+    echo
+    echo "HOSTFILE_CONTENT"
+    cat "$evidence_dir/hosts.used"
+    echo
+    echo "HOST_SLOTS_SUMMARY"
+    cat "$evidence_dir/host_slots.env" 2>/dev/null || true
   } >> "$log"
 else
   echo "HOSTFILE_MISSING=$hostfile" >> "$log"

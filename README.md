@@ -227,6 +227,7 @@ Cluster evidence is saved in:
 
 ```text
 results/final_YYYYMMDD-HHMMSS/evidence/cluster_evidence.txt
+results/final_YYYYMMDD-HHMMSS/evidence/host_slots.csv
 ```
 
 The generated report draft is saved in:

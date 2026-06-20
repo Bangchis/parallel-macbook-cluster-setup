@@ -47,6 +47,7 @@ REQUIRED_TABLES = [
 REQUIRED_EVIDENCE = [
     "cluster_evidence.txt",
     "hosts.used",
+    "host_slots.csv",
 ]
 
 REQUIRED_REPORT = [
@@ -268,6 +269,23 @@ def check_cluster_hosts(run_dir: Path, rows: list[tuple[str, str, str]], expecte
     add(rows, status, "expected cluster hostnames", detail)
 
 
+def check_host_slots(run_dir: Path, rows: list[tuple[str, str, str]]) -> None:
+    summary = parse_env(run_dir / "experiment_summary.env")
+    total_procs = inum(summary.get("ATTN_TOTAL_PROCS", "0"))
+    slot_rows = read_csv(run_dir / "evidence" / "host_slots.csv")
+    if not slot_rows:
+        add(rows, "WARN", "hostfile slots", "missing evidence/host_slots.csv")
+        return
+    total_slots = sum(inum(r.get("slots", "0")) for r in slot_rows)
+    hosts = [r.get("host", "") for r in slot_rows]
+    add(
+        rows,
+        "PASS" if total_procs > 0 and total_slots == total_procs else "WARN",
+        "hostfile slot total",
+        f"slots={total_slots}, ATTN_TOTAL_PROCS={total_procs}, hosts={hosts}",
+    )
+
+
 def check_loc(repo: Path, rows: list[tuple[str, str, str]]) -> None:
     files = []
     for folder in ["src", "scripts", "plots", "python_tests"]:
@@ -357,6 +375,7 @@ def main() -> int:
     check_speedup(run_dir, rows)
     check_load_balance(run_dir, rows)
     check_cluster_hosts(run_dir, rows, args.require_host)
+    check_host_slots(run_dir, rows)
     check_loc(repo, rows)
     check_member_contributions(run_dir, rows)
 

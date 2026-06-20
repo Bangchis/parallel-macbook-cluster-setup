@@ -106,12 +106,15 @@ tables/member_contributions.csv
 report/final_report_draft.md
 evidence/cluster_evidence.txt
 evidence/hosts.used
+evidence/host_slots.csv
 experiment_summary.env
 readiness.md
 ```
 
 Use `evidence/cluster_evidence.txt` to prove OpenMPI, hostfile, CPU info, and
 the `mpirun hostname` test.
+Use `evidence/host_slots.csv` to prove the hostfile slot total matches
+`ATTN_TOTAL_PROCS`.
 Use `experiment_summary.env` to report the selected N and 2N.
 Use `tables/analysis.md` for the main result discussion.
 Use `tables/experiment_advisor.md` and `tables/experiment_advisor.env` if the

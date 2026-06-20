@@ -14,6 +14,7 @@ Evidence:
 
 - `results/final_.../evidence/cluster_evidence.txt`
 - `results/final_.../evidence/hosts.used`
+- `results/final_.../evidence/host_slots.csv`
 - `results/final_.../raw/rank_metrics.csv`
 - `results/final_.../readiness.md`
 - `results/latest_preflight.md`
@@ -21,6 +22,7 @@ Evidence:
 Expected proof:
 
 - `mpirun hostname` shows `master`, `node1`, and `node2`.
+- `host_slots.csv` slot total matches `ATTN_TOTAL_PROCS`.
 - `rank_metrics.csv` shows rows assigned to ranks on all hostnames.
 - `EXPERIMENT_PREFLIGHT_STATUS=PASS` before the long benchmark.
 

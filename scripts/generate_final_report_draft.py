@@ -212,6 +212,7 @@ def section_analysis(run_dir: Path) -> str:
 def section_evidence(run_dir: Path) -> str:
     evidence = run_dir / "evidence" / "cluster_evidence.txt"
     hosts_used = run_dir / "evidence" / "hosts.used"
+    host_slots = run_dir / "evidence" / "host_slots.csv"
     readiness = run_dir / "readiness.md"
     lines = [
         "## Cluster Evidence",
@@ -220,6 +221,7 @@ def section_evidence(run_dir: Path) -> str:
         "",
         "- Cluster evidence log: " + (f"`{evidence}`" if evidence.exists() else "`missing`"),
         "- Hostfile copy: " + (f"`{hosts_used}`" if hosts_used.exists() else "`missing`"),
+        "- Host slot summary: " + (f"`{host_slots}`" if host_slots.exists() else "`missing`"),
         "- Readiness report: " + (f"`{readiness}`" if readiness.exists() else "`missing`"),
         "",
     ]
