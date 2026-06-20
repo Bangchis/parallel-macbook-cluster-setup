@@ -38,6 +38,16 @@ Keep `ATTN_THREADS=1` for the required process-count experiments.
 
 ## 3. Sanity Check Cluster
 
+Before the group meets, each member can run a tiny local smoke test:
+
+```bash
+bash scripts/run_local_final_smoke.sh
+```
+
+This does not replace the final 3-machine benchmark. It only checks that the
+pipeline, plots, tables, analysis, readiness checker, and packaging workflow
+are wired correctly on one machine.
+
 From master:
 
 ```bash

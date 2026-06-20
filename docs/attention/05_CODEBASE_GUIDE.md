@@ -87,6 +87,10 @@ Doc nay giup moi thanh vien biet file nao lam gi va nen debug o dau.
 - Selects N from `find_N.csv`, runs granularity at N, speedup at 2N, then
   generates report artifacts.
 
+`scripts/run_local_final_smoke.sh`
+
+- Runs a tiny one-machine version of the final pipeline for pre-flight checks.
+
 `scripts/run_thread_sweep.sh`
 
 - Varies OpenMP threads per rank for the hybrid MPI + OpenMP experiment.

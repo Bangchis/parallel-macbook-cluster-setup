@@ -187,6 +187,12 @@ nano configs/attention_experiment.env
 bash scripts/run_required_experiments.sh
 ```
 
+Run a tiny local smoke version of the final pipeline:
+
+```bash
+bash scripts/run_local_final_smoke.sh
+```
+
 Check final submission readiness:
 
 ```bash
