@@ -91,6 +91,12 @@ Doc nay giup moi thanh vien biet file nao lam gi va nen debug o dau.
 
 - Runs a tiny one-machine version of the final pipeline for pre-flight checks.
 
+`scripts/check_experiment_config.py`
+
+- Checks the final experiment config before the long cluster benchmark.
+- Verifies MPI tools, hostfile shape, process counts, N-search settings, and
+  required scripts.
+
 `scripts/run_thread_sweep.sh`
 
 - Varies OpenMP threads per rank for the hybrid MPI + OpenMP experiment.

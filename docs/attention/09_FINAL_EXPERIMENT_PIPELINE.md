@@ -36,6 +36,16 @@ Edit these values:
 
 Keep `ATTN_THREADS=1` for the required process-count experiments.
 
+Then check the config before spending time on a long benchmark:
+
+```bash
+python3 scripts/check_experiment_config.py --config configs/attention_experiment.env
+```
+
+Expected: `EXPERIMENT_PREFLIGHT_STATUS=PASS`. Warnings are acceptable only if
+the group understands them, for example when running a local smoke test without
+the full 3-machine hostfile.
+
 ## 3. Sanity Check Cluster
 
 Before the group meets, each member can run a tiny local smoke test:
@@ -61,6 +71,9 @@ Expected: output includes `master`, `node1`, and `node2`.
 From master:
 
 ```bash
+python3 scripts/check_experiment_config.py \
+  --config configs/attention_experiment.env \
+  --output results/latest_preflight.md
 bash scripts/run_required_experiments.sh
 ```
 

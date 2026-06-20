@@ -184,6 +184,7 @@ Run the full required final experiment pipeline on the cluster:
 ```bash
 cp configs/attention_experiment.env.example configs/attention_experiment.env
 nano configs/attention_experiment.env
+python3 scripts/check_experiment_config.py --config configs/attention_experiment.env
 bash scripts/run_required_experiments.sh
 ```
 
