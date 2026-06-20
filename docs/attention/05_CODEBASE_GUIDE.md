@@ -71,9 +71,15 @@ Doc nay giup moi thanh vien biet file nao lam gi va nen debug o dau.
 - Converts benchmark CSV files into markdown tables for the report.
 - Does not require pandas.
 
+`scripts/analyze_final_results.py`
+
+- Converts benchmark CSV files into a short written analysis for the report.
+- Summarizes selected N, speedup, load balance, block size, communication, and
+  cluster hostnames.
+
 `scripts/run_report_artifacts.sh`
 
-- Generates plots and markdown tables after experiments finish.
+- Generates plots, markdown tables, and `analysis.md` after experiments finish.
 
 `scripts/run_required_experiments.sh`
 

@@ -176,6 +176,9 @@ Generate report figures and tables:
 bash scripts/run_report_artifacts.sh
 ```
 
+This also generates `results/.../tables/analysis.md`, which summarizes the
+main results for the report discussion.
+
 Run the full required final experiment pipeline on the cluster:
 
 ```bash

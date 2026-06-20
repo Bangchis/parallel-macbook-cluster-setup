@@ -87,6 +87,7 @@ Every figure should answer one question:
 
 Markdown tables are generated in `results/tables/`:
 
+- `analysis.md`
 - `correctness.md`
 - `speedup.md`
 - `granularity.md`

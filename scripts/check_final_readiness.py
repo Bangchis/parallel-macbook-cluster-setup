@@ -31,6 +31,7 @@ REQUIRED_FIGURES = [
 ]
 
 REQUIRED_TABLES = [
+    "analysis.md",
     "correctness.md",
     "speedup.md",
     "granularity.md",

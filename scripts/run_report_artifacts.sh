@@ -13,5 +13,6 @@ tables_dir="${ATTN_TABLES_DIR:-results/tables}"
 
 "$plot_python" plots/plot_all.py --input "$raw_dir" --output "$figures_dir"
 python3 scripts/make_report_tables.py --input "$raw_dir" --output "$tables_dir"
+python3 scripts/analyze_final_results.py --input "$raw_dir" --output "$tables_dir/analysis.md"
 
 echo "REPORT_ARTIFACTS_DONE=YES"

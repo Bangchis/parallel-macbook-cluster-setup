@@ -82,6 +82,7 @@ readiness.md
 ```
 
 Use `experiment_summary.env` to report the selected N and 2N.
+Use `tables/analysis.md` for the main result discussion.
 Use `readiness.md` as the final checklist before submission.
 
 For the final cluster run, verify all 3 hostnames explicitly:
