@@ -240,6 +240,14 @@ Discuss:
 
 ## 10. Member Contributions
 
+Insert:
+
+```text
+results/final_.../tables/member_contributions.md
+```
+
+This table is a module ownership map and explanation checklist for the demo.
+
 Member 1:
 
 - tensor/config/serial/correctness

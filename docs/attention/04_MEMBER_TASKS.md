@@ -1,5 +1,15 @@
 # Member Tasks
 
+After experiments finish, the pipeline generates:
+
+```text
+results/final_.../tables/member_contributions.md
+results/final_.../tables/member_contributions.csv
+```
+
+This is an ownership and explanation map, not a fake Git authorship claim.
+Each member should be able to explain the files and concepts assigned below.
+
 ## Member 1
 
 Files:

@@ -35,6 +35,7 @@ REQUIRED_FIGURES = [
 REQUIRED_TABLES = [
     "analysis.md",
     "experiment_advisor.md",
+    "member_contributions.md",
     "correctness.md",
     "speedup.md",
     "granularity.md",
@@ -231,6 +232,24 @@ def check_loc(repo: Path, rows: list[tuple[str, str, str]]) -> None:
     add(rows, "PASS" if total >= 1000 else "WARN", "meaningful code line count", f"{total} non-empty lines")
 
 
+def check_member_contributions(run_dir: Path, rows: list[tuple[str, str, str]]) -> None:
+    path = run_dir / "tables" / "member_contributions.csv"
+    data = read_csv(path)
+    if not data:
+        add(rows, "WARN", "member contribution report", f"missing or empty: {path}")
+        return
+    low = [
+        r.get("member", "unknown")
+        for r in data
+        if inum(r.get("non_empty_lines", "0")) < inum(r.get("threshold", "250"), 250)
+    ]
+    detail = ", ".join(
+        f"{r.get('member', '?')}={r.get('non_empty_lines', '0')}"
+        for r in data
+    )
+    add(rows, "PASS" if not low else "WARN", "member contribution lines", detail)
+
+
 def check_find_n(run_dir: Path, rows: list[tuple[str, str, str]]) -> None:
     summary = run_dir / "experiment_summary.env"
     if not summary.exists():
@@ -273,6 +292,7 @@ def main() -> int:
     check_load_balance(run_dir, rows)
     check_cluster_hosts(run_dir, rows, args.require_host)
     check_loc(repo, rows)
+    check_member_contributions(run_dir, rows)
 
     text = markdown(rows)
     out = run_dir / "readiness.md"

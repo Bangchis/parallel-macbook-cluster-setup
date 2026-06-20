@@ -238,6 +238,13 @@ results/final_YYYYMMDD-HHMMSS/tables/experiment_advisor.md
 results/final_YYYYMMDD-HHMMSS/tables/experiment_advisor.env
 ```
 
+Member contribution evidence is saved in:
+
+```text
+results/final_YYYYMMDD-HHMMSS/tables/member_contributions.md
+results/final_YYYYMMDD-HHMMSS/tables/member_contributions.csv
+```
+
 The raw speedup CSV is also post-processed so these columns are filled:
 
 ```text

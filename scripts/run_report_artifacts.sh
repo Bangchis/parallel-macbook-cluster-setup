@@ -20,6 +20,9 @@ python3 scripts/advise_experiments.py \
   --input "$raw_dir" \
   --output "$tables_dir/experiment_advisor.md" \
   --env-output "$tables_dir/experiment_advisor.env"
+python3 scripts/make_member_contribution_report.py \
+  --output "$tables_dir/member_contributions.md" \
+  --csv-output "$tables_dir/member_contributions.csv"
 
 run_dir="$(dirname "$raw_dir")"
 if [[ -d "$run_dir" && "$run_dir" != "." ]]; then

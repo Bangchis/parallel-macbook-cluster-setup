@@ -71,6 +71,12 @@ Doc nay giup moi thanh vien biet file nao lam gi va nen debug o dau.
 - Converts benchmark CSV files into markdown tables for the report.
 - Does not require pandas.
 
+`scripts/make_member_contribution_report.py`
+
+- Generates `member_contributions.md` and `.csv`.
+- Maps each member to owned modules, counts non-empty lines, and lists what
+  that member must explain during the demo.
+
 `scripts/analyze_final_results.py`
 
 - Converts benchmark CSV files into a short written analysis for the report.

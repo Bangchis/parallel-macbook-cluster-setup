@@ -102,6 +102,7 @@ raw/*.csv
 figures/*.png
 tables/*.md
 tables/experiment_advisor.env
+tables/member_contributions.csv
 report/final_report_draft.md
 evidence/cluster_evidence.txt
 evidence/hosts.used
@@ -115,6 +116,8 @@ Use `experiment_summary.env` to report the selected N and 2N.
 Use `tables/analysis.md` for the main result discussion.
 Use `tables/experiment_advisor.md` and `tables/experiment_advisor.env` if the
 first benchmark run needs a better N or granularity setting.
+Use `tables/member_contributions.md` to explain per-member module ownership
+and line-count evidence.
 Use `tables/granularity.md` to discuss both compute load imbalance and
 `idle_gap_pct`; `idle_gap_pct <= 0.25` is the target for the professor's
 idle-time rule.

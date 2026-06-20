@@ -188,11 +188,14 @@ Requirement:
 Evidence:
 
 - `docs/attention/04_MEMBER_TASKS.md`
+- `results/final_.../tables/member_contributions.md`
+- `results/final_.../tables/member_contributions.csv`
 - `results/final_.../readiness.md`
 
 Expected proof:
 
 - Readiness line count check passes.
+- Each member's contribution report row is at least 250 non-empty lines.
 - Each member has assigned files and concepts.
 
 ## Report
