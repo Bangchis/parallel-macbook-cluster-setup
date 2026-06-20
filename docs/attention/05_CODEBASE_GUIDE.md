@@ -91,6 +91,11 @@ Doc nay giup moi thanh vien biet file nao lam gi va nen debug o dau.
 
 - Varies OpenMP threads per rank for the hybrid MPI + OpenMP experiment.
 
+`scripts/collect_final_evidence.sh`
+
+- Captures cluster evidence: hostfile, OpenMPI version, CPU information, git
+  commit, and `mpirun hostname`.
+
 `scripts/check_final_readiness.py`
 
 - Checks whether a final run directory has required CSV files, plots, tables,

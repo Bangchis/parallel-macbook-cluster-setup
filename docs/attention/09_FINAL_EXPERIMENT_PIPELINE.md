@@ -56,12 +56,13 @@ bash scripts/run_required_experiments.sh
 
 The script runs:
 
-1. correctness demo
-2. find N with total physical cores
-3. granularity/load-balance test at N
-4. speedup test at 2N
-5. block-size, memory, communication-strategy, OpenMP thread comparisons
-6. report figures and tables
+1. cluster evidence collection
+2. correctness demo
+3. find N with total physical cores
+4. granularity/load-balance test at N
+5. speedup test at 2N
+6. block-size, memory, communication-strategy, OpenMP thread comparisons
+7. report figures and tables
 
 ## 5. Outputs
 
@@ -77,10 +78,14 @@ Important files:
 raw/*.csv
 figures/*.png
 tables/*.md
+evidence/cluster_evidence.txt
+evidence/hosts.used
 experiment_summary.env
 readiness.md
 ```
 
+Use `evidence/cluster_evidence.txt` to prove OpenMPI, hostfile, CPU info, and
+the `mpirun hostname` test.
 Use `experiment_summary.env` to report the selected N and 2N.
 Use `tables/analysis.md` for the main result discussion.
 Use `readiness.md` as the final checklist before submission.

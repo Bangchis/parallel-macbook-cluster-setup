@@ -42,6 +42,11 @@ REQUIRED_TABLES = [
     "thread_scaling.md",
 ]
 
+REQUIRED_EVIDENCE = [
+    "cluster_evidence.txt",
+    "hosts.used",
+]
+
 
 def read_csv(path: Path) -> list[dict[str, str]]:
     if not path.exists():
@@ -109,8 +114,29 @@ def check_files(run_dir: Path, rows: list[tuple[str, str, str]]) -> None:
     for name in REQUIRED_TABLES:
         path = run_dir / "tables" / name
         add(rows, "PASS" if path.exists() else "FAIL", f"tables/{name}", str(path))
+    for name in REQUIRED_EVIDENCE:
+        path = run_dir / "evidence" / name
+        add(rows, "PASS" if path.exists() else "WARN", f"evidence/{name}", str(path))
     summary = run_dir / "experiment_summary.env"
     add(rows, "PASS" if summary.exists() else "WARN", "experiment_summary.env", str(summary))
+
+
+def check_evidence(run_dir: Path, rows: list[tuple[str, str, str]]) -> None:
+    log = run_dir / "evidence" / "cluster_evidence.txt"
+    if not log.exists():
+        add(rows, "WARN", "cluster evidence log", "missing")
+        return
+    text = log.read_text(encoding="utf-8", errors="ignore")
+    has_done = "EVIDENCE_DONE=YES" in text
+    has_mpi = "COMMAND: mpirun" in text
+    has_fail = "COMMAND_FAILED" in text
+    status = "PASS" if has_done and has_mpi and not has_fail else "WARN"
+    add(
+        rows,
+        status,
+        "cluster evidence log",
+        f"EVIDENCE_DONE={has_done}, mpirun_recorded={has_mpi}, command_failed={has_fail}",
+    )
 
 
 def check_correctness(run_dir: Path, rows: list[tuple[str, str, str]]) -> None:
@@ -204,6 +230,7 @@ def main() -> int:
     rows: list[tuple[str, str, str]] = []
     add(rows, "PASS" if run_dir.exists() else "FAIL", "run directory", str(run_dir))
     check_files(run_dir, rows)
+    check_evidence(run_dir, rows)
     check_correctness(run_dir, rows)
     check_find_n(run_dir, rows)
     check_speedup(run_dir, rows)

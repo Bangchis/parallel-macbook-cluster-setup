@@ -36,6 +36,7 @@ Insert evidence:
 
 - `mpirun -np 3 --hostfile configs/hosts hostname`
 - screenshot or terminal log showing `master`, `node1`, `node2`
+- `results/final_.../evidence/cluster_evidence.txt`
 
 ## 3. Serial Algorithm
 

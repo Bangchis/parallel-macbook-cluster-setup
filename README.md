@@ -193,6 +193,12 @@ Check final submission readiness:
 python3 scripts/check_final_readiness.py --run-dir results/final_YYYYMMDD-HHMMSS --require-host master --require-host node1 --require-host node2
 ```
 
+Cluster evidence is saved in:
+
+```text
+results/final_YYYYMMDD-HHMMSS/evidence/cluster_evidence.txt
+```
+
 Docs chinh:
 
 ```text

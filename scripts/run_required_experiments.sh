@@ -12,10 +12,12 @@ fi
 
 timestamp="$(date +%Y%m%d-%H%M%S)"
 run_dir="${ATTN_RUN_DIR:-results/final_${timestamp}}"
+export ATTN_RUN_DIR="$run_dir"
 export ATTN_RESULTS_DIR="${ATTN_RESULTS_DIR:-$run_dir/raw}"
 export ATTN_FIGURES_DIR="${ATTN_FIGURES_DIR:-$run_dir/figures}"
 export ATTN_TABLES_DIR="${ATTN_TABLES_DIR:-$run_dir/tables}"
-mkdir -p "$ATTN_RESULTS_DIR" "$ATTN_FIGURES_DIR" "$ATTN_TABLES_DIR"
+export ATTN_EVIDENCE_DIR="${ATTN_EVIDENCE_DIR:-$run_dir/evidence}"
+mkdir -p "$ATTN_RESULTS_DIR" "$ATTN_FIGURES_DIR" "$ATTN_TABLES_DIR" "$ATTN_EVIDENCE_DIR"
 
 total_procs="${ATTN_TOTAL_PROCS:-12}"
 target_min_ms="${ATTN_TARGET_MIN_MS:-120000}"
@@ -25,15 +27,20 @@ echo "FINAL_EXPERIMENT_RUN_DIR=$run_dir"
 echo "RAW_RESULTS=$ATTN_RESULTS_DIR"
 echo "FIGURES=$ATTN_FIGURES_DIR"
 echo "TABLES=$ATTN_TABLES_DIR"
+echo "EVIDENCE=$ATTN_EVIDENCE_DIR"
 
 echo
-echo "PHASE 1/6: correctness demo"
+echo "PHASE 1/7: cluster evidence"
+bash scripts/collect_final_evidence.sh
+
+echo
+echo "PHASE 2/7: correctness demo"
 ATTN_NP="$total_procs" \
 ATTN_VERIFY=1 \
 bash scripts/run_demo_correctness.sh
 
 echo
-echo "PHASE 2/6: find N with P=$total_procs"
+echo "PHASE 3/7: find N with P=$total_procs"
 ATTN_NP="$total_procs" \
 ATTN_L_LIST="${ATTN_FIND_N_LIST:-512 1024 1536 2048 3072 4096}" \
 bash scripts/run_find_N.sh
@@ -69,6 +76,7 @@ ATTN_TARGET_MAX_MS=$target_max_ms
 ATTN_RESULTS_DIR=$ATTN_RESULTS_DIR
 ATTN_FIGURES_DIR=$ATTN_FIGURES_DIR
 ATTN_TABLES_DIR=$ATTN_TABLES_DIR
+ATTN_EVIDENCE_DIR=$ATTN_EVIDENCE_DIR
 ATTN_THREAD_SWEEP_NP=$thread_np
 EOF
 
@@ -76,19 +84,19 @@ echo "SELECTED_N=$selected_n"
 echo "SPEEDUP_L_2N=$speedup_l"
 
 echo
-echo "PHASE 3/6: granularity and load balance at N=$selected_n"
+echo "PHASE 4/7: granularity and load balance at N=$selected_n"
 ATTN_NP="$total_procs" \
 ATTN_L="$selected_n" \
 bash scripts/run_granularity_sweep.sh
 
 echo
-echo "PHASE 4/6: speedup at 2N=$speedup_l"
+echo "PHASE 5/7: speedup at 2N=$speedup_l"
 ATTN_L="$speedup_l" \
 ATTN_P_LIST="${ATTN_P_LIST:-1 2 4 8 12}" \
 bash scripts/run_speedup_sweep.sh
 
 echo
-echo "PHASE 5/6: block size, memory, communication, and OpenMP thread scaling"
+echo "PHASE 6/7: block size, memory, communication, and OpenMP thread scaling"
 ATTN_NP="$total_procs" \
 ATTN_L="$selected_n" \
 bash scripts/run_blocksize_sweep.sh
@@ -108,7 +116,7 @@ ATTN_L="$selected_n" \
 bash scripts/run_thread_sweep.sh
 
 echo
-echo "PHASE 6/6: report artifacts"
+echo "PHASE 7/7: report artifacts"
 bash scripts/run_report_artifacts.sh
 python3 scripts/check_final_readiness.py --run-dir "$run_dir"
 

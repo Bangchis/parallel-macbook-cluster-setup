@@ -26,6 +26,15 @@ What to say:
 - OpenMPI launches ranks through SSH.
 - The master is also a compute node, not only a coordinator.
 
+Also open:
+
+```text
+results/final_.../evidence/cluster_evidence.txt
+```
+
+This file records the hostfile, OpenMPI version, CPU information, git commit,
+and the `mpirun hostname` evidence.
+
 ## 2. Show Correctness
 
 ```bash
