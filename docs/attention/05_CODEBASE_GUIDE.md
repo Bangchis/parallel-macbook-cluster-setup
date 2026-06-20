@@ -101,6 +101,11 @@ Doc nay giup moi thanh vien biet file nao lam gi va nen debug o dau.
 - Checks whether a final run directory has required CSV files, plots, tables,
   correctness evidence, selected N, rank hostnames, and code line count.
 
+`scripts/make_submission_package.sh`
+
+- Creates a submission folder and `.tar.gz` archive with source, docs, report
+  template, and optional final results.
+
 `configs/attention_experiment.env.example`
 
 - Template for the final cluster benchmark settings.
@@ -108,6 +113,11 @@ Doc nay giup moi thanh vien biet file nao lam gi va nen debug o dau.
 `report/FINAL_REPORT_TEMPLATE.md`
 
 - Report draft aligned with the professor's requirements.
+
+`docs/attention/11_RUBRIC_MAPPING.md`
+
+- Maps each professor requirement to code files, result files, and report
+  evidence.
 
 ## Main Program
 

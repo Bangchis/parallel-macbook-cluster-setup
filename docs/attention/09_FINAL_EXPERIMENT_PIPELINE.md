@@ -125,3 +125,18 @@ Then rerun:
 ```bash
 bash scripts/run_required_experiments.sh
 ```
+
+## 7. Create Submission Package
+
+After readiness is acceptable:
+
+```bash
+bash scripts/make_submission_package.sh --run-dir results/final_YYYYMMDD-HHMMSS
+```
+
+This creates:
+
+```text
+submission/attention_project_submission_YYYYMMDD-HHMMSS/
+submission/attention_project_submission_YYYYMMDD-HHMMSS.tar.gz
+```

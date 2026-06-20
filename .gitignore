@@ -9,3 +9,4 @@ configs/cluster.env
 configs/attention_experiment.env
 configs/hostfile
 results/
+submission/

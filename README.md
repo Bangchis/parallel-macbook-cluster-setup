@@ -199,6 +199,12 @@ Cluster evidence is saved in:
 results/final_YYYYMMDD-HHMMSS/evidence/cluster_evidence.txt
 ```
 
+Create a submission archive:
+
+```bash
+bash scripts/make_submission_package.sh --run-dir results/final_YYYYMMDD-HHMMSS
+```
+
 Docs chinh:
 
 ```text
@@ -213,6 +219,7 @@ docs/attention/07_DEBUGGING_GUIDE.md
 docs/attention/08_REPORT_OUTLINE.md
 docs/attention/09_FINAL_EXPERIMENT_PIPELINE.md
 docs/attention/10_FINAL_DEMO_SCRIPT.md
+docs/attention/11_RUBRIC_MAPPING.md
 report/FINAL_REPORT_TEMPLATE.md
 ```
 
