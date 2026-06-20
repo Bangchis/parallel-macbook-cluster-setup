@@ -81,9 +81,18 @@ Doc nay giup moi thanh vien biet file nao lam gi va nen debug o dau.
 - Selects N from `find_N.csv`, runs granularity at N, speedup at 2N, then
   generates report artifacts.
 
+`scripts/check_final_readiness.py`
+
+- Checks whether a final run directory has required CSV files, plots, tables,
+  correctness evidence, selected N, rank hostnames, and code line count.
+
 `configs/attention_experiment.env.example`
 
 - Template for the final cluster benchmark settings.
+
+`report/FINAL_REPORT_TEMPLATE.md`
+
+- Report draft aligned with the professor's requirements.
 
 ## Main Program
 

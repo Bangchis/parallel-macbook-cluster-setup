@@ -184,6 +184,12 @@ nano configs/attention_experiment.env
 bash scripts/run_required_experiments.sh
 ```
 
+Check final submission readiness:
+
+```bash
+python3 scripts/check_final_readiness.py --run-dir results/final_YYYYMMDD-HHMMSS --require-host master --require-host node1 --require-host node2
+```
+
 Docs chinh:
 
 ```text
@@ -197,6 +203,8 @@ docs/attention/06_VISUALIZATION_GUIDE.md
 docs/attention/07_DEBUGGING_GUIDE.md
 docs/attention/08_REPORT_OUTLINE.md
 docs/attention/09_FINAL_EXPERIMENT_PIPELINE.md
+docs/attention/10_FINAL_DEMO_SCRIPT.md
+report/FINAL_REPORT_TEMPLATE.md
 ```
 
 ## Trạng thái mong muốn trước khi làm project thật

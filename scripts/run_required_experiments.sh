@@ -103,6 +103,7 @@ bash scripts/run_comm_strategy_sweep.sh
 echo
 echo "PHASE 6/6: report artifacts"
 bash scripts/run_report_artifacts.sh
+python3 scripts/check_final_readiness.py --run-dir "$run_dir"
 
 echo "REQUIRED_EXPERIMENTS_DONE=YES"
 echo "SUMMARY_FILE=$run_dir/experiment_summary.env"

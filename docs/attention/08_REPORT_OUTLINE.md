@@ -2,6 +2,8 @@
 
 Target length: 15-17 pages.
 
+Use `report/FINAL_REPORT_TEMPLATE.md` as the starting draft.
+
 ## 1. Introduction
 
 - Course project goal.

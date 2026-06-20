@@ -78,9 +78,21 @@ raw/*.csv
 figures/*.png
 tables/*.md
 experiment_summary.env
+readiness.md
 ```
 
 Use `experiment_summary.env` to report the selected N and 2N.
+Use `readiness.md` as the final checklist before submission.
+
+For the final cluster run, verify all 3 hostnames explicitly:
+
+```bash
+python3 scripts/check_final_readiness.py \
+  --run-dir results/final_YYYYMMDD-HHMMSS \
+  --require-host master \
+  --require-host node1 \
+  --require-host node2
+```
 
 ## 6. If N Is Too Small Or Too Large
 
