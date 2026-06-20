@@ -20,6 +20,8 @@ Generate plots and markdown tables for the report:
 bash scripts/run_report_artifacts.sh
 ```
 
+The final pipeline writes artifacts under `results/final_YYYYMMDD-HHMMSS/`.
+
 ## Required Figures
 
 `01_runtime_vs_L.png`

@@ -36,6 +36,12 @@ All experiments:
 bash scripts/run_all_experiments.sh
 ```
 
+Required final experiment pipeline:
+
+```bash
+bash scripts/run_required_experiments.sh
+```
+
 Memory comparison only:
 
 ```bash

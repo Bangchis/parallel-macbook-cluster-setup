@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+results_dir="${ATTN_RESULTS_DIR:-results/raw}"
 for algo in serial_full serial_row omp_online mpi_online; do
   echo
   echo "MEMORY algorithm=$algo"
@@ -13,6 +14,6 @@ for algo in serial_full serial_row omp_online mpi_online; do
   ATTN_DH="${ATTN_DH:-32}" \
   ATTN_VERIFY="${ATTN_VERIFY:-1}" \
   ATTN_RUN_ID="memory_${algo}" \
-  ATTN_OUTPUT=results/raw/memory.csv \
+  ATTN_OUTPUT="$results_dir/memory.csv" \
   bash scripts/run_single_benchmark.sh
 done

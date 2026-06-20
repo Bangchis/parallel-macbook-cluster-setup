@@ -7,7 +7,11 @@ if [[ ! -x "$plot_python" ]]; then
   exit 1
 fi
 
-"$plot_python" plots/plot_all.py --input results/raw --output results/figures
-python3 scripts/make_report_tables.py --input results/raw --output results/tables
+raw_dir="${ATTN_RESULTS_DIR:-results/raw}"
+figures_dir="${ATTN_FIGURES_DIR:-results/figures}"
+tables_dir="${ATTN_TABLES_DIR:-results/tables}"
+
+"$plot_python" plots/plot_all.py --input "$raw_dir" --output "$figures_dir"
+python3 scripts/make_report_tables.py --input "$raw_dir" --output "$tables_dir"
 
 echo "REPORT_ARTIFACTS_DONE=YES"

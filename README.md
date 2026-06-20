@@ -176,6 +176,14 @@ Generate report figures and tables:
 bash scripts/run_report_artifacts.sh
 ```
 
+Run the full required final experiment pipeline on the cluster:
+
+```bash
+cp configs/attention_experiment.env.example configs/attention_experiment.env
+nano configs/attention_experiment.env
+bash scripts/run_required_experiments.sh
+```
+
 Docs chinh:
 
 ```text
@@ -188,6 +196,7 @@ docs/attention/05_CODEBASE_GUIDE.md
 docs/attention/06_VISUALIZATION_GUIDE.md
 docs/attention/07_DEBUGGING_GUIDE.md
 docs/attention/08_REPORT_OUTLINE.md
+docs/attention/09_FINAL_EXPERIMENT_PIPELINE.md
 ```
 
 ## Trạng thái mong muốn trước khi làm project thật

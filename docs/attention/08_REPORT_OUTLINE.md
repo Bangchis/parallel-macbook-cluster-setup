@@ -58,6 +58,7 @@ gather metrics
 - Granularity/load balance.
 - Speedup.
 - Memory comparison.
+- Communication strategy comparison.
 
 ## 8. Results
 

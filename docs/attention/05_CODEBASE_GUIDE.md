@@ -75,6 +75,16 @@ Doc nay giup moi thanh vien biet file nao lam gi va nen debug o dau.
 
 - Generates plots and markdown tables after experiments finish.
 
+`scripts/run_required_experiments.sh`
+
+- Runs the final required experiment pipeline.
+- Selects N from `find_N.csv`, runs granularity at N, speedup at 2N, then
+  generates report artifacts.
+
+`configs/attention_experiment.env.example`
+
+- Template for the final cluster benchmark settings.
+
 ## Main Program
 
 `src/main.cpp`

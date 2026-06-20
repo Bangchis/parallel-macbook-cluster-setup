@@ -6,5 +6,6 @@ __pycache__/
 *.tmp
 build/
 configs/cluster.env
+configs/attention_experiment.env
 configs/hostfile
 results/
