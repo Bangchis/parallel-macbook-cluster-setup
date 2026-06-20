@@ -203,6 +203,7 @@ Requirement:
 Evidence:
 
 - `report/FINAL_REPORT_TEMPLATE.md`
+- `results/final_.../report/final_report_draft.md`
 - `docs/attention/08_REPORT_OUTLINE.md`
 - `results/final_.../tables/analysis.md`
 

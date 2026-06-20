@@ -81,6 +81,12 @@ Doc nay giup moi thanh vien biet file nao lam gi va nen debug o dau.
 
 - Generates plots, markdown tables, and `analysis.md` after experiments finish.
 
+`scripts/generate_final_report_draft.py`
+
+- Assembles a first Markdown report draft from a final run directory.
+- Inserts algorithm explanation, pseudocode, tables, figure references,
+  evidence links, and generated analysis.
+
 `scripts/run_required_experiments.sh`
 
 - Runs the final required experiment pipeline.

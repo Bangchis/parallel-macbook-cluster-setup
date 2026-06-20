@@ -47,6 +47,10 @@ REQUIRED_EVIDENCE = [
     "hosts.used",
 ]
 
+REQUIRED_REPORT = [
+    "final_report_draft.md",
+]
+
 
 def read_csv(path: Path) -> list[dict[str, str]]:
     if not path.exists():
@@ -117,6 +121,9 @@ def check_files(run_dir: Path, rows: list[tuple[str, str, str]]) -> None:
     for name in REQUIRED_EVIDENCE:
         path = run_dir / "evidence" / name
         add(rows, "PASS" if path.exists() else "WARN", f"evidence/{name}", str(path))
+    for name in REQUIRED_REPORT:
+        path = run_dir / "report" / name
+        add(rows, "PASS" if path.exists() else "WARN", f"report/{name}", str(path))
     summary = run_dir / "experiment_summary.env"
     add(rows, "PASS" if summary.exists() else "WARN", "experiment_summary.env", str(summary))
 

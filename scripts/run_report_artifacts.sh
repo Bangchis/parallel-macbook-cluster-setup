@@ -15,4 +15,11 @@ tables_dir="${ATTN_TABLES_DIR:-results/tables}"
 python3 scripts/make_report_tables.py --input "$raw_dir" --output "$tables_dir"
 python3 scripts/analyze_final_results.py --input "$raw_dir" --output "$tables_dir/analysis.md"
 
+run_dir="$(dirname "$raw_dir")"
+if [[ -d "$run_dir" && "$run_dir" != "." ]]; then
+  python3 scripts/generate_final_report_draft.py \
+    --run-dir "$run_dir" \
+    --output "$run_dir/report/final_report_draft.md"
+fi
+
 echo "REPORT_ARTIFACTS_DONE=YES"

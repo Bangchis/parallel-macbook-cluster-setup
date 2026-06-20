@@ -101,6 +101,7 @@ Important files:
 raw/*.csv
 figures/*.png
 tables/*.md
+report/final_report_draft.md
 evidence/cluster_evidence.txt
 evidence/hosts.used
 experiment_summary.env
@@ -111,6 +112,8 @@ Use `evidence/cluster_evidence.txt` to prove OpenMPI, hostfile, CPU info, and
 the `mpirun hostname` test.
 Use `experiment_summary.env` to report the selected N and 2N.
 Use `tables/analysis.md` for the main result discussion.
+Use `report/final_report_draft.md` as the first full report draft, then edit
+names, screenshots, final discussion, and formatting before submission.
 Use `readiness.md` as the final checklist before submission.
 
 For the final cluster run, verify all 3 hostnames explicitly:

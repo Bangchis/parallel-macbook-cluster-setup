@@ -192,7 +192,9 @@ bash scripts/run_report_artifacts.sh
 ```
 
 This also generates `results/.../tables/analysis.md`, which summarizes the
-main results for the report discussion.
+main results for the report discussion, and
+`results/.../report/final_report_draft.md`, which is a first report draft
+assembled from the run artifacts.
 
 Run the full required final experiment pipeline on the cluster:
 
@@ -219,6 +221,12 @@ Cluster evidence is saved in:
 
 ```text
 results/final_YYYYMMDD-HHMMSS/evidence/cluster_evidence.txt
+```
+
+The generated report draft is saved in:
+
+```text
+results/final_YYYYMMDD-HHMMSS/report/final_report_draft.md
 ```
 
 Create a submission archive:
