@@ -50,6 +50,19 @@ Current implementation:
 
 Blocking communication duoc dung de code don gian va de giai thich.
 
+Experimental non-blocking implementation:
+
+- `mpi_online_nb`
+- `mpi_row_nb`
+
+This version uses:
+
+- `MPI_Ibcast` for Q/K/V.
+- `MPI_Ireduce` for output and checksum.
+
+The main report can use blocking MPI as the primary design and use the
+non-blocking version as an ablation to discuss communication strategy.
+
 ## Load Balancing
 
 ```text

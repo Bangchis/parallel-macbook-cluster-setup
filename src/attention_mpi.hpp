@@ -30,3 +30,25 @@ void attn_mpi_row(const Tensor4D& Q_root,
                   Metrics& metrics,
                   std::vector<RankStat>& rank_stats,
                   std::vector<ThreadStat>& thread_stats);
+
+void attn_mpi_online_nb(const Tensor4D& Q_root,
+                        const Tensor4D& K_root,
+                        const Tensor4D& V_root,
+                        Tensor4D& O_root,
+                        const Config& cfg,
+                        int rank,
+                        int world_size,
+                        Metrics& metrics,
+                        std::vector<RankStat>& rank_stats,
+                        std::vector<ThreadStat>& thread_stats);
+
+void attn_mpi_row_nb(const Tensor4D& Q_root,
+                     const Tensor4D& K_root,
+                     const Tensor4D& V_root,
+                     Tensor4D& O_root,
+                     const Config& cfg,
+                     int rank,
+                     int world_size,
+                     Metrics& metrics,
+                     std::vector<RankStat>& rank_stats,
+                     std::vector<ThreadStat>& thread_stats);

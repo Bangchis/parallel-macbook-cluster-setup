@@ -36,7 +36,8 @@ static std::string sibling_csv(const std::string& output, const std::string& nam
 
 static double memory_for_algo(const Config& cfg) {
     if (cfg.algo == "serial_full") return mem_naive(cfg);
-    if (cfg.algo == "serial_row" || cfg.algo == "omp_row" || cfg.algo == "mpi_row") {
+    if (cfg.algo == "serial_row" || cfg.algo == "omp_row" ||
+        cfg.algo == "mpi_row" || cfg.algo == "mpi_row_nb") {
         return mem_rowwise(cfg);
     }
     return mem_online(cfg);
@@ -197,9 +198,15 @@ int main(int argc, char** argv) {
             if (cfg.algo == "mpi_online") {
                 attn_mpi_online(Q, K, V, run_O, cfg, rank, world_size,
                                 run_metrics, run_rank_stats, run_thread_stats);
+            } else if (cfg.algo == "mpi_online_nb") {
+                attn_mpi_online_nb(Q, K, V, run_O, cfg, rank, world_size,
+                                   run_metrics, run_rank_stats, run_thread_stats);
             } else if (cfg.algo == "mpi_row") {
                 attn_mpi_row(Q, K, V, run_O, cfg, rank, world_size,
                              run_metrics, run_rank_stats, run_thread_stats);
+            } else if (cfg.algo == "mpi_row_nb") {
+                attn_mpi_row_nb(Q, K, V, run_O, cfg, rank, world_size,
+                                run_metrics, run_rank_stats, run_thread_stats);
             } else {
                 exit_code = run_root_algo(cfg, rank, Q, K, V, run_O,
                                           run_metrics, run_thread_stats);

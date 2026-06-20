@@ -42,6 +42,12 @@ Memory comparison only:
 bash scripts/run_memory_comparison.sh
 ```
 
+Communication strategy comparison only:
+
+```bash
+bash scripts/run_comm_strategy_sweep.sh
+```
+
 Generate plots:
 
 ```bash

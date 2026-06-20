@@ -35,7 +35,7 @@ run_check() {
 }
 
 for causal in 0 1; do
-  for algo in serial_full serial_row omp_row omp_online mpi_row mpi_online; do
+  for algo in serial_full serial_row omp_row omp_online mpi_row mpi_online mpi_row_nb mpi_online_nb; do
     run_check "$algo" 1 1 4 4 "$causal"
     run_check "$algo" 1 2 16 8 "$causal"
     run_check "$algo" 2 2 64 32 "$causal"

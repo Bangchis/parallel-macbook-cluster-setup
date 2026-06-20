@@ -61,6 +61,11 @@ Generate all plots:
 - Reads `attention_dump.csv`.
 - Only for small debug/demo input.
 
+`10_comm_strategy.png`
+
+- Reads `comm_strategy.csv`.
+- Compares blocking and non-blocking MPI communication overhead.
+
 ## Report Advice
 
 Every figure should answer one question:
@@ -70,3 +75,4 @@ Every figure should answer one question:
 - Does adding processes improve runtime?
 - Is load balanced?
 - Does online softmax reduce memory?
+- Does changing MPI communication strategy help?

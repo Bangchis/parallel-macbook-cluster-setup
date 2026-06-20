@@ -27,6 +27,7 @@ def main() -> int:
     try_plot("plot_memory", "memory", args.input, args.output)
     try_plot("plot_blocksize_heatmap", "blocksize_heatmap", args.input, args.output)
     try_plot("plot_attention_heatmap", "attention_heatmap", args.input, args.output)
+    try_plot("plot_comm_strategy", "comm_strategy", args.input, args.output)
     print("PLOT_ALL_DONE=YES")
     return 0
 

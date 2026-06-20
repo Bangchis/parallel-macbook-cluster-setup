@@ -39,7 +39,10 @@ Doc nay giup moi thanh vien biet file nao lam gi va nen debug o dau.
 
 - `attn_mpi_row`.
 - `attn_mpi_online`.
+- `attn_mpi_row_nb`.
+- `attn_mpi_online_nb`.
 - Broadcast Q/K/V, compute local rows, reduce output, gather metrics.
+- `_nb` variants use non-blocking MPI collectives for communication comparison.
 - Common bug: sai row mapping hoac hostfile sai.
 
 ## Correctness, Metrics, CSV

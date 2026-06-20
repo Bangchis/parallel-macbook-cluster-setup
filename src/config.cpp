@@ -44,6 +44,8 @@ Config parse_args(int argc, char** argv) {
             std::cout << "Options: --algo --B --H --L --Dh --Br --Bc --causal "
                       << "--assignment --schedule --omp_threads --repeat "
                       << "--verify --debug --seed --output --run_id\n";
+            std::cout << "Algorithms: serial_full serial_row omp_row omp_online "
+                      << "mpi_row mpi_online mpi_row_nb mpi_online_nb\n";
             std::exit(0);
         } else {
             throw std::runtime_error("Unknown option: " + a);

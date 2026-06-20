@@ -66,6 +66,7 @@ Use plots from `results/figures`.
 Discuss:
 
 - communication overhead
+- blocking vs non-blocking MPI communication
 - speedup trend
 - efficiency trend
 - load imbalance and `Br`

@@ -157,6 +157,12 @@ Demo performance:
 bash scripts/run_demo_perf.sh
 ```
 
+Communication strategy comparison:
+
+```bash
+bash scripts/run_comm_strategy_sweep.sh
+```
+
 Generate plots:
 
 ```bash

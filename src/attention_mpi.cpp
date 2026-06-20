@@ -45,6 +45,22 @@ static void bcast_tensor(Tensor4D& T, int root) {
     MPI_Bcast(T.data.data(), (int)T.data.size(), MPI_FLOAT, root, MPI_COMM_WORLD);
 }
 
+static void bcast_tensors(Tensor4D& Q, Tensor4D& K, Tensor4D& V,
+                          int root, bool nonblocking) {
+    if (!nonblocking) {
+        bcast_tensor(Q, root);
+        bcast_tensor(K, root);
+        bcast_tensor(V, root);
+        return;
+    }
+
+    MPI_Request reqs[3];
+    MPI_Ibcast(Q.data.data(), (int)Q.data.size(), MPI_FLOAT, root, MPI_COMM_WORLD, &reqs[0]);
+    MPI_Ibcast(K.data.data(), (int)K.data.size(), MPI_FLOAT, root, MPI_COMM_WORLD, &reqs[1]);
+    MPI_Ibcast(V.data.data(), (int)V.data.size(), MPI_FLOAT, root, MPI_COMM_WORLD, &reqs[2]);
+    MPI_Waitall(3, reqs, MPI_STATUSES_IGNORE);
+}
+
 static double dot_qk_mpi(const Tensor4D& Q, const Tensor4D& K,
                          int b, int h, int i, int j) {
     double s = 0.0;
@@ -94,7 +110,8 @@ static void attn_mpi_impl(const Tensor4D& Q_root,
                           Metrics& metrics,
                           std::vector<RankStat>& rank_stats,
                           std::vector<ThreadStat>& thread_stats,
-                          bool online) {
+                          bool online,
+                          bool nonblocking) {
     Tensor4D Q(cfg.B, cfg.H, cfg.L, cfg.Dh);
     Tensor4D K(cfg.B, cfg.H, cfg.L, cfg.Dh);
     Tensor4D V(cfg.B, cfg.H, cfg.L, cfg.Dh);
@@ -107,9 +124,7 @@ static void attn_mpi_impl(const Tensor4D& Q_root,
     MPI_Barrier(MPI_COMM_WORLD);
     double total0 = now_ms();
     double b0 = now_ms();
-    bcast_tensor(Q, 0);
-    bcast_tensor(K, 0);
-    bcast_tensor(V, 0);
+    bcast_tensors(Q, K, V, 0, nonblocking);
     double b1 = now_ms();
 
     Tensor4D local_O(cfg.B, cfg.H, cfg.L, cfg.Dh);
@@ -162,17 +177,32 @@ static void attn_mpi_impl(const Tensor4D& Q_root,
     }
     double c1 = now_ms();
 
-    O_root = Tensor4D(cfg.B, cfg.H, cfg.L, cfg.Dh);
-    double g0 = now_ms();
-    MPI_Reduce(local_O.data.data(), O_root.data.data(), (int)local_O.data.size(),
-               MPI_FLOAT, MPI_SUM, 0, MPI_COMM_WORLD);
-    double g1 = now_ms();
-
     double local_checksum = checksum(local_O);
     double global_checksum = 0.0;
+    O_root = Tensor4D(cfg.B, cfg.H, cfg.L, cfg.Dh);
+    double g0 = now_ms();
+    double g1 = g0;
     double r0 = now_ms();
-    MPI_Reduce(&local_checksum, &global_checksum, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-    double r1 = now_ms();
+    double r1 = r0;
+    if (nonblocking) {
+        MPI_Request reqs[2];
+        MPI_Ireduce(local_O.data.data(), O_root.data.data(), (int)local_O.data.size(),
+                    MPI_FLOAT, MPI_SUM, 0, MPI_COMM_WORLD, &reqs[0]);
+        MPI_Ireduce(&local_checksum, &global_checksum, 1, MPI_DOUBLE, MPI_SUM,
+                    0, MPI_COMM_WORLD, &reqs[1]);
+        MPI_Waitall(2, reqs, MPI_STATUSES_IGNORE);
+        g1 = now_ms();
+        r0 = g1;
+        r1 = g1;
+    } else {
+        MPI_Reduce(local_O.data.data(), O_root.data.data(), (int)local_O.data.size(),
+                   MPI_FLOAT, MPI_SUM, 0, MPI_COMM_WORLD);
+        g1 = now_ms();
+        r0 = now_ms();
+        MPI_Reduce(&local_checksum, &global_checksum, 1, MPI_DOUBLE, MPI_SUM,
+                   0, MPI_COMM_WORLD);
+        r1 = now_ms();
+    }
 
     double compute_ms = c1 - c0;
     double bcast_ms = b1 - b0;
@@ -272,7 +302,7 @@ void attn_mpi_online(const Tensor4D& Q_root,
                      std::vector<RankStat>& rank_stats,
                      std::vector<ThreadStat>& thread_stats) {
     attn_mpi_impl(Q_root, K_root, V_root, O_root, cfg, rank, world_size,
-                  metrics, rank_stats, thread_stats, true);
+                  metrics, rank_stats, thread_stats, true, false);
 }
 
 void attn_mpi_row(const Tensor4D& Q_root,
@@ -286,5 +316,33 @@ void attn_mpi_row(const Tensor4D& Q_root,
                   std::vector<RankStat>& rank_stats,
                   std::vector<ThreadStat>& thread_stats) {
     attn_mpi_impl(Q_root, K_root, V_root, O_root, cfg, rank, world_size,
-                  metrics, rank_stats, thread_stats, false);
+                  metrics, rank_stats, thread_stats, false, false);
+}
+
+void attn_mpi_online_nb(const Tensor4D& Q_root,
+                        const Tensor4D& K_root,
+                        const Tensor4D& V_root,
+                        Tensor4D& O_root,
+                        const Config& cfg,
+                        int rank,
+                        int world_size,
+                        Metrics& metrics,
+                        std::vector<RankStat>& rank_stats,
+                        std::vector<ThreadStat>& thread_stats) {
+    attn_mpi_impl(Q_root, K_root, V_root, O_root, cfg, rank, world_size,
+                  metrics, rank_stats, thread_stats, true, true);
+}
+
+void attn_mpi_row_nb(const Tensor4D& Q_root,
+                     const Tensor4D& K_root,
+                     const Tensor4D& V_root,
+                     Tensor4D& O_root,
+                     const Config& cfg,
+                     int rank,
+                     int world_size,
+                     Metrics& metrics,
+                     std::vector<RankStat>& rank_stats,
+                     std::vector<ThreadStat>& thread_stats) {
+    attn_mpi_impl(Q_root, K_root, V_root, O_root, cfg, rank, world_size,
+                  metrics, rank_stats, thread_stats, false, true);
 }
