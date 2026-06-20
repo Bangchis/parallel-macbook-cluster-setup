@@ -55,6 +55,12 @@ bash scripts/install_plot_deps.sh
 .venv-plot/bin/python plots/plot_all.py --input results/raw --output results/figures
 ```
 
+Generate report figures and markdown tables:
+
+```bash
+bash scripts/run_report_artifacts.sh
+```
+
 ## Required Experiments
 
 Find N:

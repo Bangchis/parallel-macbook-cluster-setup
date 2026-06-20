@@ -14,6 +14,12 @@ Generate all plots:
 .venv-plot/bin/python plots/plot_all.py --input results/raw --output results/figures
 ```
 
+Generate plots and markdown tables for the report:
+
+```bash
+bash scripts/run_report_artifacts.sh
+```
+
 ## Required Figures
 
 `01_runtime_vs_L.png`
@@ -76,3 +82,11 @@ Every figure should answer one question:
 - Is load balanced?
 - Does online softmax reduce memory?
 - Does changing MPI communication strategy help?
+
+Markdown tables are generated in `results/tables/`:
+
+- `correctness.md`
+- `speedup.md`
+- `granularity.md`
+- `rank_breakdown.md`
+- `communication.md`

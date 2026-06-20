@@ -66,6 +66,15 @@ Doc nay giup moi thanh vien biet file nao lam gi va nen debug o dau.
 
 - Estimates naive, row-wise, online memory.
 
+`scripts/make_report_tables.py`
+
+- Converts benchmark CSV files into markdown tables for the report.
+- Does not require pandas.
+
+`scripts/run_report_artifacts.sh`
+
+- Generates plots and markdown tables after experiments finish.
+
 ## Main Program
 
 `src/main.cpp`
