@@ -169,6 +169,19 @@ def check_speedup(run_dir: Path, rows: list[tuple[str, str, str]]) -> None:
     status = "PASS" if has_serial and has_parallel else "WARN"
     add(rows, status, "speedup process list", "P=" + " ".join(str(p) for p in procs))
 
+    derived = [
+        max(fnum(r.get("speedup_with_comm", "0")) for r in speed),
+        max(fnum(r.get("speedup_without_comm", "0")) for r in speed),
+        max(fnum(r.get("efficiency_with_comm", "0")) for r in speed),
+        max(fnum(r.get("efficiency_without_comm", "0")) for r in speed),
+    ]
+    add(
+        rows,
+        "PASS" if all(v > 0 for v in derived) else "WARN",
+        "speedup derived columns",
+        "max values=" + ",".join(f"{v:.4g}" for v in derived),
+    )
+
 
 def check_load_balance(run_dir: Path, rows: list[tuple[str, str, str]]) -> None:
     gran = read_csv(run_dir / "raw" / "granularity.csv")

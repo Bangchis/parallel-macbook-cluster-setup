@@ -13,3 +13,5 @@ for P in ${ATTN_P_LIST:-1 2 4 8 12}; do
   ATTN_OUTPUT="$results_dir/speedup.csv" \
   bash scripts/run_single_benchmark.sh
 done
+
+python3 scripts/enrich_speedup_csv.py --input "$results_dir/speedup.csv"

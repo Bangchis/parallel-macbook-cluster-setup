@@ -115,6 +115,8 @@ Use `experiment_summary.env` to report the selected N and 2N.
 Use `tables/analysis.md` for the main result discussion.
 Use `tables/experiment_advisor.md` and `tables/experiment_advisor.env` if the
 first benchmark run needs a better N or granularity setting.
+Use `raw/speedup.csv` directly for speedup/efficiency values; the sweep fills
+the derived columns after all process counts finish.
 Use `report/final_report_draft.md` as the first full report draft, then edit
 names, screenshots, final discussion, and formatting before submission.
 Use `readiness.md` as the final checklist before submission.

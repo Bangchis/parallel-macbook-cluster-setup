@@ -238,6 +238,15 @@ results/final_YYYYMMDD-HHMMSS/tables/experiment_advisor.md
 results/final_YYYYMMDD-HHMMSS/tables/experiment_advisor.env
 ```
 
+The raw speedup CSV is also post-processed so these columns are filled:
+
+```text
+speedup_with_comm
+speedup_without_comm
+efficiency_with_comm
+efficiency_without_comm
+```
+
 Create a submission archive:
 
 ```bash

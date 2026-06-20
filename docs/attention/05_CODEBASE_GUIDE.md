@@ -102,6 +102,12 @@ Doc nay giup moi thanh vien biet file nao lam gi va nen debug o dau.
 - Selects N from `find_N.csv`, runs granularity at N, speedup at 2N, then
   generates report artifacts.
 
+`scripts/enrich_speedup_csv.py`
+
+- Fills the raw `speedup.csv` speedup and efficiency columns after the speedup
+  sweep.
+- Keeps the raw CSV consistent with the speedup plots and report tables.
+
 `scripts/run_local_final_smoke.sh`
 
 - Runs a tiny one-machine version of the final pipeline for pre-flight checks.
