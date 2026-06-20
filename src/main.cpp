@@ -9,8 +9,11 @@
 #include "tensor.hpp"
 
 #include <filesystem>
+#include <cmath>
+#include <fstream>
 #include <iostream>
 #include <mpi.h>
+#include <limits>
 #include <stdexcept>
 #include <vector>
 
@@ -47,6 +50,56 @@ static void print_error(const ErrorStat& e) {
     std::cout << "max_abs_error=" << e.max_abs_error
               << " mean_abs_error=" << e.mean_abs_error
               << " relative_l2_error=" << e.relative_l2_error << "\n";
+}
+
+static double dump_dot_qk(const Tensor4D& Q, const Tensor4D& K,
+                          int b, int h, int i, int j) {
+    double s = 0.0;
+    for (int d = 0; d < Q.Dh; d++) {
+        s += (double)Q(b, h, i, d) * (double)K(b, h, j, d);
+    }
+    return s / std::sqrt((double)Q.Dh);
+}
+
+static void write_attention_dump(const std::string& path,
+                                 const Tensor4D& Q,
+                                 const Tensor4D& K,
+                                 const Config& cfg) {
+    if (cfg.L > 64) {
+        return;
+    }
+    std::filesystem::path p(path);
+    if (p.has_parent_path()) {
+        std::filesystem::create_directories(p.parent_path());
+    }
+    std::ofstream out(path);
+    out << "i,j,p\n";
+    std::vector<double> scores(cfg.L);
+    int b = 0;
+    int h = 0;
+    for (int i = 0; i < cfg.L; i++) {
+        double m = -std::numeric_limits<double>::infinity();
+        for (int j = 0; j < cfg.L; j++) {
+            if (cfg.causal && j > i) {
+                scores[j] = -std::numeric_limits<double>::infinity();
+            } else {
+                scores[j] = dump_dot_qk(Q, K, b, h, i, j);
+                m = std::max(m, scores[j]);
+            }
+        }
+        double denom = 0.0;
+        for (int j = 0; j < cfg.L; j++) {
+            if (std::isfinite(scores[j])) {
+                scores[j] = std::exp(scores[j] - m);
+                denom += scores[j];
+            } else {
+                scores[j] = 0.0;
+            }
+        }
+        for (int j = 0; j < cfg.L; j++) {
+            out << i << "," << j << "," << (scores[j] / denom) << "\n";
+        }
+    }
 }
 
 static int run_root_algo(const Config& cfg, int rank, Tensor4D& Q, Tensor4D& K,
@@ -192,11 +245,18 @@ int main(int argc, char** argv) {
 
             if (!cfg.output.empty()) {
                 write_summary(cfg.output, cfg, metrics);
+                std::string common_summary = sibling_csv(cfg.output, "summary.csv");
+                if (std::filesystem::path(cfg.output).filename() != "summary.csv") {
+                    write_summary(common_summary, cfg, metrics);
+                }
                 write_rank_stats(sibling_csv(cfg.output, "rank_metrics.csv"), rank_stats);
                 for (ThreadStat& t : thread_stats) {
-                    t.run_id = 0;
+                    t.run_id = cfg.run_id;
                 }
                 write_thread_stats(sibling_csv(cfg.output, "thread_metrics.csv"), thread_stats);
+                if (cfg.debug && cfg.L <= 64) {
+                    write_attention_dump(sibling_csv(cfg.output, "attention_dump.csv"), Q, K, cfg);
+                }
             }
 
             if (!pass) {

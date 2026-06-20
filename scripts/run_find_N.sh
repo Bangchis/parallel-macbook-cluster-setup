@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-for L in 512 1024 1536 2048 3072 4096; do
+for L in ${ATTN_L_LIST:-512 1024 1536 2048 3072 4096}; do
   echo
   echo "FIND_N L=$L"
   ATTN_L="$L" \

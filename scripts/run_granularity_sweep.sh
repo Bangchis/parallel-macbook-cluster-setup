@@ -2,8 +2,8 @@
 set -euo pipefail
 
 L="${ATTN_L:-1024}"
-for assignment in contiguous cyclic block_cyclic; do
-  for Br in 1 8 16 32 64; do
+for assignment in ${ATTN_ASSIGNMENT_LIST:-contiguous cyclic block_cyclic}; do
+  for Br in ${ATTN_BR_LIST:-1 8 16 32 64}; do
     echo
     echo "GRANULARITY assignment=$assignment Br=$Br L=$L"
     ATTN_L="$L" \

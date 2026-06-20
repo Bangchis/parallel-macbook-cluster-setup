@@ -40,8 +40,10 @@ if [[ "$algo" == mpi_* && "$np" -gt 1 ]]; then
   mpi=(mpirun -np "$np")
   if [[ "$use_hostfile" == "1" ]]; then
     mpi+=(--hostfile "$hostfile")
+    mpi+=(--mca btl tcp,self --mca btl_tcp_if_include "${MPI_LAN_CIDR:-192.168.31.0/24}" --mca btl_tcp_disable_family 6)
+  else
+    mpi+=(--oversubscribe --mca btl self,sm,tcp)
   fi
-  mpi+=(--mca btl tcp,self --mca btl_tcp_if_include "${MPI_LAN_CIDR:-192.168.31.0/24}" --mca btl_tcp_disable_family 6)
   echo "COMMAND: ${mpi[*]} ${cmd[*]}"
   "${mpi[@]}" "${cmd[@]}"
 else

@@ -161,7 +161,7 @@ Generate plots:
 
 ```bash
 bash scripts/install_plot_deps.sh
-python3 plots/plot_all.py --input results/raw --output results/figures
+.venv-plot/bin/python plots/plot_all.py --input results/raw --output results/figures
 ```
 
 Docs chinh:
@@ -172,6 +172,10 @@ docs/attention/01_ALGORITHM_EXPLANATION.md
 docs/attention/02_MPI_OPENMP_DESIGN.md
 docs/attention/03_DEMO_AND_BENCHMARK.md
 docs/attention/04_MEMBER_TASKS.md
+docs/attention/05_CODEBASE_GUIDE.md
+docs/attention/06_VISUALIZATION_GUIDE.md
+docs/attention/07_DEBUGGING_GUIDE.md
+docs/attention/08_REPORT_OUTLINE.md
 ```
 
 ## Trạng thái mong muốn trước khi làm project thật

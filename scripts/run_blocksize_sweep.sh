@@ -2,8 +2,8 @@
 set -euo pipefail
 
 L="${ATTN_L:-1024}"
-for Br in 8 16 32 64; do
-  for Bc in 32 64 128 256; do
+for Br in ${ATTN_BR_LIST:-8 16 32 64}; do
+  for Bc in ${ATTN_BC_LIST:-32 64 128 256}; do
     echo
     echo "BLOCKSIZE Br=$Br Bc=$Bc L=$L"
     ATTN_L="$L" \

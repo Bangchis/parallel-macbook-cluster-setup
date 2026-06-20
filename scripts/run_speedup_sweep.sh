@@ -2,7 +2,7 @@
 set -euo pipefail
 
 L="${ATTN_L:-1024}"
-for P in 1 2 4 8 12; do
+for P in ${ATTN_P_LIST:-1 2 4 8 12}; do
   echo
   echo "SPEEDUP P=$P L=$L"
   ATTN_NP="$P" \

@@ -4,7 +4,7 @@
 #include <vector>
 
 struct ThreadStat {
-    int run_id = 0;
+    std::string run_id = "manual";
     int rank = 0;
     int thread_id = 0;
     int rows_done = 0;

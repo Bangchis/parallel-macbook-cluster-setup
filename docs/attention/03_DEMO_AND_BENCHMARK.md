@@ -36,11 +36,17 @@ All experiments:
 bash scripts/run_all_experiments.sh
 ```
 
+Memory comparison only:
+
+```bash
+bash scripts/run_memory_comparison.sh
+```
+
 Generate plots:
 
 ```bash
-python3 -m pip install --user pandas matplotlib
-python3 plots/plot_all.py --input results/raw --output results/figures
+bash scripts/install_plot_deps.sh
+.venv-plot/bin/python plots/plot_all.py --input results/raw --output results/figures
 ```
 
 ## Required Experiments
