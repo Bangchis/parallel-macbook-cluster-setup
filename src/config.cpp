@@ -1,5 +1,6 @@
 #include "config.hpp"
 
+#include <array>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -12,6 +13,28 @@ static bool to_bool(const std::string& s) {
     return s == "1" || s == "true" || s == "yes";
 }
 
+template <size_t N>
+static bool one_of(const std::string& value, const std::array<const char*, N>& valid) {
+    for (const char* item : valid) {
+        if (value == item) {
+            return true;
+        }
+    }
+    return false;
+}
+
+template <size_t N>
+static std::string join_values(const std::array<const char*, N>& valid) {
+    std::string out;
+    for (size_t i = 0; i < valid.size(); i++) {
+        if (i > 0) {
+            out += ", ";
+        }
+        out += valid[i];
+    }
+    return out;
+}
+
 static std::string need_value(int& i, int argc, char** argv) {
     if (i + 1 >= argc) {
         throw std::runtime_error(std::string("Missing value for ") + argv[i]);
@@ -20,6 +43,17 @@ static std::string need_value(int& i, int argc, char** argv) {
 }
 
 Config parse_args(int argc, char** argv) {
+    static constexpr std::array<const char*, 8> algos = {
+        "serial_full", "serial_row", "omp_row", "omp_online",
+        "mpi_row", "mpi_online", "mpi_row_nb", "mpi_online_nb",
+    };
+    static constexpr std::array<const char*, 3> assignments = {
+        "contiguous", "cyclic", "block_cyclic",
+    };
+    static constexpr std::array<const char*, 3> schedules = {
+        "static", "dynamic", "guided",
+    };
+
     Config cfg;
     for (int i = 1; i < argc; i++) {
         std::string a = argv[i];
@@ -44,8 +78,9 @@ Config parse_args(int argc, char** argv) {
             std::cout << "Options: --algo --B --H --L --Dh --Br --Bc --causal "
                       << "--assignment --schedule --omp_threads --repeat "
                       << "--verify --debug --seed --output --run_id\n";
-            std::cout << "Algorithms: serial_full serial_row omp_row omp_online "
-                      << "mpi_row mpi_online mpi_row_nb mpi_online_nb\n";
+            std::cout << "Algorithms: " << join_values(algos) << "\n";
+            std::cout << "Assignments: " << join_values(assignments) << "\n";
+            std::cout << "OpenMP schedules: " << join_values(schedules) << "\n";
             std::exit(0);
         } else {
             throw std::runtime_error("Unknown option: " + a);
@@ -57,6 +92,18 @@ Config parse_args(int argc, char** argv) {
     }
     if (cfg.Br <= 0 || cfg.Bc <= 0 || cfg.omp_threads <= 0 || cfg.repeat <= 0) {
         throw std::runtime_error("Br, Bc, omp_threads, repeat must be positive");
+    }
+    if (!one_of(cfg.algo, algos)) {
+        throw std::runtime_error("Unknown algorithm '" + cfg.algo +
+                                 "'. Valid algorithms: " + join_values(algos));
+    }
+    if (!one_of(cfg.assignment, assignments)) {
+        throw std::runtime_error("Unknown assignment '" + cfg.assignment +
+                                 "'. Valid assignments: " + join_values(assignments));
+    }
+    if (!one_of(cfg.schedule, schedules)) {
+        throw std::runtime_error("Unknown schedule '" + cfg.schedule +
+                                 "'. Valid schedules: " + join_values(schedules));
     }
     return cfg;
 }
