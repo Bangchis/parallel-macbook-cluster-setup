@@ -93,6 +93,32 @@ def count_lines(paths: list[Path]) -> int:
     return total
 
 
+def parse_env(path: Path) -> dict[str, str]:
+    values: dict[str, str] = {}
+    if not path.exists():
+        return values
+    for line in path.read_text(encoding="utf-8", errors="ignore").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        values[key.strip()] = value.strip().strip("\"'")
+    return values
+
+
+def expected_process_list(total: int) -> list[int]:
+    if total <= 1:
+        return [1]
+    out = []
+    p = 1
+    while p < total:
+        out.append(p)
+        p *= 2
+    if total not in out:
+        out.append(total)
+    return out
+
+
 def add(rows: list[tuple[str, str, str]], status: str, item: str, detail: str) -> None:
     rows.append((status, item, detail))
 
@@ -164,11 +190,31 @@ def check_speedup(run_dir: Path, rows: list[tuple[str, str, str]]) -> None:
     if not speed:
         add(rows, "FAIL", "speedup", "missing speedup rows")
         return
+    summary = parse_env(run_dir / "experiment_summary.env")
+    total_procs = inum(summary.get("ATTN_TOTAL_PROCS", "0"))
+    speedup_l = inum(summary.get("ATTN_SPEEDUP_L", "0"))
     procs = sorted({inum(r.get("world_size", "0")) for r in speed})
     has_serial = 1 in procs
     has_parallel = any(p > 1 for p in procs)
     status = "PASS" if has_serial and has_parallel else "WARN"
     add(rows, status, "speedup process list", "P=" + " ".join(str(p) for p in procs))
+
+    expected = expected_process_list(total_procs)
+    missing = [p for p in expected if p not in procs]
+    add(
+        rows,
+        "PASS" if not missing else "WARN",
+        "speedup required process list",
+        f"expected={expected}, seen={procs}, missing={missing}",
+    )
+
+    speedup_l_values = sorted({inum(r.get("L", r.get("N", "0"))) for r in speed})
+    add(
+        rows,
+        "PASS" if speedup_l and speedup_l_values == [speedup_l] else "WARN",
+        "speedup input size",
+        f"expected_2N={speedup_l}, seen_L={speedup_l_values}",
+    )
 
     derived = [
         max(fnum(r.get("speedup_with_comm", "0")) for r in speed),
@@ -255,14 +301,34 @@ def check_find_n(run_dir: Path, rows: list[tuple[str, str, str]]) -> None:
     if not summary.exists():
         add(rows, "WARN", "selected N", "missing experiment_summary.env")
         return
-    values: dict[str, str] = {}
-    for line in summary.read_text(encoding="utf-8").splitlines():
-        if "=" in line:
-            k, v = line.split("=", 1)
-            values[k] = v
+    values = parse_env(summary)
     selected = values.get("ATTN_SELECTED_N", "")
     speedup_l = values.get("ATTN_SPEEDUP_L", "")
     add(rows, "PASS" if selected and speedup_l else "WARN", "selected N and 2N", f"N={selected}, 2N={speedup_l}")
+
+    selected_n = inum(selected)
+    expected_2n = selected_n * 2 if selected_n > 0 else 0
+    add(
+        rows,
+        "PASS" if expected_2n and inum(speedup_l) == expected_2n else "WARN",
+        "2N relation",
+        f"N={selected_n}, speedup_L={speedup_l}, expected={expected_2n}",
+    )
+
+    find_rows = read_csv(run_dir / "raw" / "find_N.csv")
+    selected_rows = [
+        r for r in find_rows
+        if inum(r.get("L", r.get("N", "0"))) == selected_n
+    ]
+    target_min = fnum(values.get("ATTN_TARGET_MIN_MS", "120000"))
+    target_max = fnum(values.get("ATTN_TARGET_MAX_MS", "180000"))
+    runtimes = [fnum(r.get("total_ms_with_comm", "0")) for r in selected_rows]
+    in_range = any(target_min <= t <= target_max for t in runtimes)
+    detail = (
+        f"N={selected_n}, runtimes_ms={[round(t, 3) for t in runtimes]}, "
+        f"target=[{target_min:.0f},{target_max:.0f}]"
+    )
+    add(rows, "PASS" if in_range else "WARN", "selected N target runtime", detail)
 
 
 def main() -> int:

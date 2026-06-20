@@ -126,6 +126,8 @@ the derived columns after all process counts finish.
 Use `report/final_report_draft.md` as the first full report draft, then edit
 names, screenshots, final discussion, and formatting before submission.
 Use `readiness.md` as the final checklist before submission.
+For the final cluster run, fix warnings about selected `N`, `2N`, required
+process counts, and hostnames before submitting.
 
 For the final cluster run, verify all 3 hostnames explicitly:
 

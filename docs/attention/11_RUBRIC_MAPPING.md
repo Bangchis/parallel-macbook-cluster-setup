@@ -143,6 +143,7 @@ Expected proof:
 
 - `ATTN_SELECTED_N=...`
 - Runtime with communication is near 120-180 seconds.
+- Readiness confirms selected `N` is inside the target runtime range.
 
 ## Speedup
 
@@ -159,6 +160,11 @@ Evidence:
 - `results/final_.../figures/03_speedup.png`
 - `results/final_.../figures/04_efficiency.png`
 - `results/final_.../tables/speedup.md`
+
+Expected proof:
+
+- Readiness confirms speedup input size is `2N`.
+- Readiness confirms process counts include `1,2,4,8,...,total_procs`.
 
 ## Hybrid MPI + OpenMP
 

@@ -219,6 +219,10 @@ Check final submission readiness:
 python3 scripts/check_final_readiness.py --run-dir results/final_YYYYMMDD-HHMMSS --require-host master --require-host node1 --require-host node2
 ```
 
+The readiness checker also verifies the rubric-specific experiment shape:
+selected `N` near 2-3 minutes, speedup input `2N`, and process counts
+`1,2,4,8,...,total_procs`.
+
 Cluster evidence is saved in:
 
 ```text
