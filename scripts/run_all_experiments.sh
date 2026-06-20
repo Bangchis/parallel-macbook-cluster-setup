@@ -8,6 +8,7 @@ bash scripts/run_speedup_sweep.sh
 bash scripts/run_blocksize_sweep.sh
 bash scripts/run_memory_comparison.sh
 bash scripts/run_comm_strategy_sweep.sh
+bash scripts/run_thread_sweep.sh
 bash scripts/run_demo_perf.sh
 
 echo "ALL_EXPERIMENTS_DONE=YES"

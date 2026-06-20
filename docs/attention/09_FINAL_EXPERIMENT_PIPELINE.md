@@ -60,7 +60,7 @@ The script runs:
 2. find N with total physical cores
 3. granularity/load-balance test at N
 4. speedup test at 2N
-5. block-size, memory, communication-strategy comparisons
+5. block-size, memory, communication-strategy, OpenMP thread comparisons
 6. report figures and tables
 
 ## 5. Outputs

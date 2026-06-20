@@ -13,6 +13,7 @@ REQUIRED_RAW = [
     "blocksize.csv",
     "memory.csv",
     "comm_strategy.csv",
+    "thread_scaling.csv",
     "rank_metrics.csv",
     "summary.csv",
 ]
@@ -28,6 +29,7 @@ REQUIRED_FIGURES = [
     "08_blocksize_heatmap.png",
     "09_attention_heatmap.png",
     "10_comm_strategy.png",
+    "11_thread_scaling.png",
 ]
 
 REQUIRED_TABLES = [
@@ -37,6 +39,7 @@ REQUIRED_TABLES = [
     "granularity.md",
     "rank_breakdown.md",
     "communication.md",
+    "thread_scaling.md",
 ]
 
 

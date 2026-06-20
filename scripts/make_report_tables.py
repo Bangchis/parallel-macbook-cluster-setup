@@ -205,6 +205,31 @@ def make_comm_strategy(input_dir: Path, output_dir: Path) -> bool:
     return True
 
 
+def make_thread_scaling(input_dir: Path, output_dir: Path) -> bool:
+    rows = read_rows(input_dir / "thread_scaling.csv")
+    if not rows:
+        print("TABLE_SKIP=thread_scaling missing thread_scaling.csv")
+        return False
+    rows = sorted(rows, key=lambda r: int(fnum(r.get("omp_threads", "0"))))
+    first = rows[0]
+    base_comm = fnum(first.get("total_ms_with_comm", "0"))
+    body = table(
+        ["threads_per_rank", "processes", "runtime_with_comm_ms", "runtime_without_comm_ms", "speedup_vs_T1"],
+        [
+            [
+                r.get("omp_threads", ""),
+                r.get("world_size", ""),
+                fmt(fnum(r.get("total_ms_with_comm", "0"))),
+                fmt(fnum(r.get("total_ms_without_comm", "0"))),
+                fmt(base_comm / fnum(r.get("total_ms_with_comm", "1"), 1.0)),
+            ]
+            for r in rows
+        ],
+    )
+    write(output_dir / "thread_scaling.md", "OpenMP Thread Scaling", body)
+    return True
+
+
 def make_index(output_dir: Path, made: list[str]) -> None:
     body = "\n".join(f"- `{name}.md`" for name in made)
     write(output_dir / "README.md", "Report Tables", body + "\n")
@@ -225,6 +250,7 @@ def main() -> int:
         ("granularity", make_granularity),
         ("rank_breakdown", make_rank_breakdown),
         ("communication", make_comm_strategy),
+        ("thread_scaling", make_thread_scaling),
     ]:
         if fn(input_dir, output_dir):
             made.append(name)

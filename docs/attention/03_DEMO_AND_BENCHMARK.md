@@ -54,6 +54,12 @@ Communication strategy comparison only:
 bash scripts/run_comm_strategy_sweep.sh
 ```
 
+OpenMP thread scaling only:
+
+```bash
+bash scripts/run_thread_sweep.sh
+```
+
 Generate plots:
 
 ```bash

@@ -83,6 +83,7 @@ Show in this order:
 5. `06_granularity_load_balance.png`
 6. `07_memory_comparison.png`
 7. `10_comm_strategy.png`
+8. `11_thread_scaling.png`
 
 What to say:
 
@@ -91,6 +92,7 @@ What to say:
 - Load balance is controlled by row-block granularity `Br`.
 - Online softmax reduces memory compared with full attention.
 - Non-blocking MPI is included as a communication-strategy comparison.
+- Thread scaling shows the OpenMP part of the hybrid implementation.
 
 ## 5. Show Readiness Report
 

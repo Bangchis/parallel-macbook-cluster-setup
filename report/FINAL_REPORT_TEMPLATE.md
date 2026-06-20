@@ -217,6 +217,15 @@ Insert:
 - `figures/10_comm_strategy.png`
 - `tables/communication.md`
 
+### 8.6 OpenMP Thread Scaling
+
+Fix the MPI mapping and vary OpenMP threads per rank.
+
+Insert:
+
+- `figures/11_thread_scaling.png`
+- `tables/thread_scaling.md`
+
 ## 9. Discussion
 
 Discuss:
@@ -224,6 +233,7 @@ Discuss:
 - why runtime grows near `L^2`
 - why communication overhead limits speedup
 - whether block-cyclic mapping improves balance
+- whether additional OpenMP threads help inside each rank
 - why online softmax reduces memory
 - why master also computes rows
 

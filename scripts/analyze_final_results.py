@@ -205,6 +205,39 @@ def section_comm(raw: Path) -> str:
     return "\n".join(body)
 
 
+def section_threads(raw: Path) -> str:
+    rows = read_rows(raw / "thread_scaling.csv")
+    if not rows:
+        return "## OpenMP Thread Scaling\n\nNo `thread_scaling.csv` data found.\n"
+    rows = sorted(rows, key=lambda r: inum(r.get("omp_threads", "0")))
+    base = fnum(rows[0].get("total_ms_with_comm", "0"))
+    best = min(rows, key=lambda r: fnum(r.get("total_ms_with_comm", "999999")))
+    best_threads = inum(best.get("omp_threads", "0"))
+    best_speedup = base / fnum(best.get("total_ms_with_comm", "1"), 1.0)
+    body = [
+        "## OpenMP Thread Scaling",
+        "",
+        f"- Fastest observed thread count per rank: `{best_threads}`.",
+        f"- Speedup versus 1 thread per rank: `{best_speedup:.3f}`.",
+        f"- MPI ranks used in this sweep: `{best.get('world_size', '')}`.",
+        "",
+        table(
+            ["threads", "total", "compute", "speedup_vs_T1"],
+            [
+                [
+                    r.get("omp_threads", ""),
+                    fmt_ms(fnum(r.get("total_ms_with_comm", "0"))),
+                    fmt_ms(fnum(r.get("compute_ms_max", "0"))),
+                    f"{base / fnum(r.get('total_ms_with_comm', '1'), 1.0):.3f}",
+                ]
+                for r in rows
+            ],
+        ),
+        "",
+    ]
+    return "\n".join(body)
+
+
 def section_hosts(raw: Path) -> str:
     rows = read_rows(raw / "rank_metrics.csv")
     hosts = sorted({r.get("hostname", "") for r in rows if r.get("hostname", "")})
@@ -237,6 +270,7 @@ def main() -> int:
         section_granularity(raw),
         section_blocksize(raw),
         section_comm(raw),
+        section_threads(raw),
     ]
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)

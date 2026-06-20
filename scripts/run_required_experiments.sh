@@ -58,6 +58,7 @@ fi
 
 speedup_l=$((selected_n * 2))
 memory_l="${ATTN_MEMORY_L:-512}"
+thread_np="${ATTN_THREAD_SWEEP_NP:-3}"
 
 cat > "$run_dir/experiment_summary.env" <<EOF
 ATTN_SELECTED_N=$selected_n
@@ -68,6 +69,7 @@ ATTN_TARGET_MAX_MS=$target_max_ms
 ATTN_RESULTS_DIR=$ATTN_RESULTS_DIR
 ATTN_FIGURES_DIR=$ATTN_FIGURES_DIR
 ATTN_TABLES_DIR=$ATTN_TABLES_DIR
+ATTN_THREAD_SWEEP_NP=$thread_np
 EOF
 
 echo "SELECTED_N=$selected_n"
@@ -86,7 +88,7 @@ ATTN_P_LIST="${ATTN_P_LIST:-1 2 4 8 12}" \
 bash scripts/run_speedup_sweep.sh
 
 echo
-echo "PHASE 5/6: block size, memory, and communication strategy"
+echo "PHASE 5/6: block size, memory, communication, and OpenMP thread scaling"
 ATTN_NP="$total_procs" \
 ATTN_L="$selected_n" \
 bash scripts/run_blocksize_sweep.sh
@@ -99,6 +101,11 @@ bash scripts/run_memory_comparison.sh
 ATTN_NP="$total_procs" \
 ATTN_L="$selected_n" \
 bash scripts/run_comm_strategy_sweep.sh
+
+MPI_MAP_BY="${ATTN_THREAD_SWEEP_MAP_BY:-}" \
+ATTN_NP="$thread_np" \
+ATTN_L="$selected_n" \
+bash scripts/run_thread_sweep.sh
 
 echo
 echo "PHASE 6/6: report artifacts"

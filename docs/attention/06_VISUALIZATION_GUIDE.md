@@ -74,6 +74,11 @@ The final pipeline writes artifacts under `results/final_YYYYMMDD-HHMMSS/`.
 - Reads `comm_strategy.csv`.
 - Compares blocking and non-blocking MPI communication overhead.
 
+`11_thread_scaling.png`
+
+- Reads `thread_scaling.csv`.
+- Shows runtime as OpenMP threads per rank change.
+
 ## Report Advice
 
 Every figure should answer one question:
@@ -84,6 +89,7 @@ Every figure should answer one question:
 - Is load balanced?
 - Does online softmax reduce memory?
 - Does changing MPI communication strategy help?
+- Does using more OpenMP threads per rank help?
 
 Markdown tables are generated in `results/tables/`:
 
@@ -93,3 +99,4 @@ Markdown tables are generated in `results/tables/`:
 - `granularity.md`
 - `rank_breakdown.md`
 - `communication.md`
+- `thread_scaling.md`

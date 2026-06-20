@@ -61,6 +61,7 @@ gather metrics
 - Speedup.
 - Memory comparison.
 - Communication strategy comparison.
+- OpenMP thread scaling.
 
 ## 8. Results
 
