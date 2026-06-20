@@ -91,6 +91,17 @@ Doc nay giup moi thanh vien biet file nao lam gi va nen debug o dau.
 
 - Runs a tiny one-machine version of the final pipeline for pre-flight checks.
 
+`scripts/run_final_demo.sh`
+
+- Runs a short demo that builds the benchmark, prints MPI hostnames, runs the
+  correctness demo, and writes a demo summary.
+- Use this during the live demo before showing the long final benchmark plots.
+
+`scripts/summarize_demo_run.py`
+
+- Reads `demo_correctness.csv`, `rank_metrics.csv`, and MPI hostname evidence.
+- Writes `demo_summary.md` with correctness, hostnames, rank work, and timing.
+
 `scripts/check_experiment_config.py`
 
 - Checks the final experiment config before the long cluster benchmark.

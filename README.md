@@ -151,6 +151,21 @@ Demo correctness tren cluster:
 bash scripts/run_demo_correctness.sh
 ```
 
+One-command final demo on the cluster:
+
+```bash
+bash scripts/run_final_demo.sh
+```
+
+If the other machines are not on the same LAN, run a local-only demo smoke:
+
+```bash
+ATTN_USE_HOSTFILE=0 ATTN_DEMO_NP=2 bash scripts/run_final_demo.sh
+```
+
+The demo writes `results/demo_YYYYMMDD-HHMMSS/demo_terminal.log` and
+`results/demo_YYYYMMDD-HHMMSS/demo_summary.md`.
+
 Demo performance:
 
 ```bash

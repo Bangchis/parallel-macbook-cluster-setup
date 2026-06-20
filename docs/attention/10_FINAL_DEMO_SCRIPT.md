@@ -2,6 +2,42 @@
 
 Use this as the live demo checklist.
 
+## 0. One-Command Demo
+
+On the master VM, after all three machines are on the same LAN:
+
+```bash
+cd ~/parallel-macbook-cluster-setup
+git pull
+bash scripts/run_final_demo.sh
+```
+
+Expected ending:
+
+```text
+DEMO_SUMMARY_STATUS=PASS
+FINAL_DEMO_DONE=YES
+```
+
+The script saves:
+
+```text
+results/demo_YYYYMMDD-HHMMSS/demo_terminal.log
+results/demo_YYYYMMDD-HHMMSS/demo_summary.md
+results/demo_YYYYMMDD-HHMMSS/evidence/mpi_hostname.txt
+results/demo_YYYYMMDD-HHMMSS/raw/demo_correctness.csv
+results/demo_YYYYMMDD-HHMMSS/raw/rank_metrics.csv
+```
+
+If the group is not on the same LAN yet, use a local-only smoke demo:
+
+```bash
+ATTN_USE_HOSTFILE=0 ATTN_DEMO_NP=2 bash scripts/run_final_demo.sh
+```
+
+That local run is only a wiring check. The final presentation should still use
+the real 3-machine cluster run.
+
 ## 1. Show The Cluster
 
 On the master VM:

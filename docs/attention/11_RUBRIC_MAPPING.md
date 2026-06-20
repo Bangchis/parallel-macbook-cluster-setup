@@ -215,5 +215,7 @@ Requirement:
 Evidence:
 
 - `docs/attention/10_FINAL_DEMO_SCRIPT.md`
+- `results/demo_.../demo_summary.md`
+- `results/demo_.../demo_terminal.log`
 - `results/final_.../evidence/cluster_evidence.txt`
 - `results/final_.../readiness.md`
